@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://squadmeet.app/</loc><xhtml:link rel="alternate" hreflang="en" href="https://squadmeet.app/en/"/></url>
+  <url><loc>https://squadmeet.app/en/</loc><xhtml:link rel="alternate" hreflang="es" href="https://squadmeet.app/"/></url>
+  <url><loc>https://squadmeet.app/privacidad/</loc></url>
+  <url><loc>https://squadmeet.app/condiciones/</loc></url>
+  <url><loc>https://squadmeet.app/en/privacy/</loc></url>
+  <url><loc>https://squadmeet.app/en/terms/</loc></url>
+  <url><loc>https://squadmeet.app/cookies/</loc></url>
+  <url><loc>https://squadmeet.app/en/cookies/</loc></url>
+</urlset>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Política de privacidad · SquadMeet</title>
+<meta name="description" content="Qué datos trata SquadMeet y para qué.">
+<link rel="canonical" href="https://squadmeet.app/privacidad/">
+<link rel="alternate" hreflang="en" href="https://squadmeet.app/en/privacy/">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.googletagmanager.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; font-src 'self'; connect-src 'self' https://senal.squadmeet.app wss://senal.squadmeet.app wss://0.peerjs.com https://squadmeet-73y6k.pages.dev https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com; media-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#fff6e5">
+<meta name="color-scheme" content="light">
+<link rel="icon" href="/icono.png">
+<link rel="icon" href="/icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icono-180.png">
+<link rel="preload" href="/fuentes/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/fuentes/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/estilo.css?v=76d9dcf937">
+</head>
+<body>
+<a class="salto" href="#contenido">Ir al contenido</a>
+<header class="cabecera">
+  <div class="ancho">
+    <a class="marca" href="/" aria-label="SquadMeet, inicio"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>SquadMeet</a>
+    <nav aria-label="Idioma"><a class="idioma" href="/en/privacy/" hreflang="en" lang="en">English</a></nav>
+  </div>
+</header>
+<main class="legal" id="contenido">
+  <div class="ancho">
+    <h1>Política de privacidad</h1>
+    <p class="fecha">Última actualización: 25 de octubre de 2026</p>
+    <div class="resumen"><p>En resumen: SquadMeet no tiene cuentas ni anuncios. El vídeo y el audio van directos y cifrados entre vuestros navegadores: no los vemos ni los grabamos. Para el tiempo gratis contamos minutos con un identificador al azar, sin saber quién eres. En la web, Google Analytics solo funciona si lo aceptas.</p></div>
+
+    <h2>Quién es el responsable</h2>
+    <p>SquadMeet es un proyecto independiente. Para cualquier cuestión sobre privacidad, escribe a <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>.</p>
+
+    <h2>Tu cámara y tu micrófono</h2>
+    <ul>
+      <li><strong>Quien crea el grupo:</strong> SquadMeet funciona dentro de ome.tv, en su navegador. Junta su cámara con las de sus amigos en una sola imagen y mezcla vuestros micrófonos, y eso es lo que Ome.tv envía al desconocido. Lo que pase dentro de Ome.tv se rige por su propia política de privacidad.</li>
+      <li><strong>Los amigos:</strong> la página de invitación pide la cámara y el micrófono y los envía a quien creó el grupo, que les devuelve la imagen y el sonido del desconocido y del resto del grupo.</li>
+      <li>Todo viaja por WebRTC, <strong>cifrado de extremo a extremo</strong> entre navegadores (DTLS-SRTP). No grabamos nada y no podemos ver ni oír vuestras conversaciones. El chat del grupo (Pro) va por el mismo canal cifrado y tampoco pasa por nuestros servidores.</li>
+    </ul>
+
+    <h2>Qué pasa por nuestros servidores</h2>
+    <ul>
+      <li><strong>Señalización:</strong> para que los navegadores se encuentren, nuestro servidor reenvía unos mensajes técnicos: identificadores al azar del grupo y de cada persona, la descripción de la conexión y las direcciones de red necesarias (IP y puertos). Los amigos envían también el nombre que escriban (opcional), el idioma de su navegador y la orientación del móvil. Solo están en memoria mientras dura la conexión: no se guardan. Si nuestro servidor no está disponible (algunas operadoras bloquean a veces sus IP), pasan por el servidor público de <a href="https://peerjs.com/" rel="noopener">PeerJS</a>, que también se limita a reenviarlos.</li>
+      <li><strong>Retransmisión (TURN):</strong> si vuestras redes no permiten la conexión directa, el vídeo pasa por un servidor de <a href="https://www.expressturn.com/" rel="noopener">ExpressTURN</a>. Sigue cifrado de extremo a extremo; el servidor ve las IP, no el contenido.</li>
+      <li><strong>Tiempo gratis:</strong> para aplicar los minutos gratis de cada día, SquadMeet crea en tu navegador un identificador al azar y envía a nuestro servidor los minutos que usas con amigos conectados y si has compartido SquadMeet por WhatsApp ese día. Guardamos ese identificador, el día y los minutos durante 30 días. No lo relacionamos con tu nombre, tu correo ni tu cuenta de Ome.tv, y no sabemos a quién envías el mensaje de WhatsApp.</li>
+      <li><strong>Pro:</strong> el pago lo gestiona <a href="https://gumroad.com/privacy" rel="noopener">Gumroad</a>, que actúa como vendedor y trata tus datos de pago y tu correo según su política. Cuando pegas tu clave, nuestro servidor pregunta a Gumroad si es válida. Guardamos una huella cifrada de la clave (no la clave), si sigue activa y los identificadores al azar de los dispositivos donde la usas (hasta 3), mientras la licencia esté activa y 30 días más. Gumroad nos devuelve también datos de la compra, como el correo: no los guardamos.</li>
+      <li><strong>La web:</strong> squadmeet.app se sirve desde GitHub Pages, que trata las IP de quien la visita para entregar las páginas y protegerlas de ataques.</li>
+    </ul>
+
+    <h2>Google Analytics</h2>
+    <p>Solo si pulsas «Aceptar» en el aviso de cookies, la web usa Google Analytics 4 para medir cuántas personas la visitan, qué páginas ven, de qué país aproximado llegan y con qué tipo de dispositivo. Usa cookies (las tienes en la <a href="/cookies/">política de cookies</a>) y los datos se conservan 2 meses. Puedes retirar el permiso cuando quieras en «Configurar cookies», al pie de la web. Ni la página de invitación ni ome.tv tienen analítica.</p>
+
+    <h2>Qué se guarda en tu dispositivo</h2>
+    <ul>
+      <li>En ome.tv: la posición del panel, si inviertes tu imagen, el identificador al azar del tiempo gratis, tu clave Pro si la pegas y, mientras la pestaña está abierta, el grupo para poder reanudarlo si recargas.</li>
+      <li>En la página de invitación: el nombre que escribas, para no tener que escribirlo otra vez.</li>
+      <li>En esta web: por dónde vas en la guía del móvil y tu elección sobre las cookies.</li>
+    </ul>
+    <p>Puedes borrarlo cuando quieras desde los ajustes de tu navegador.</p>
+
+    <h2>Para qué y con qué base</h2>
+    <ul>
+      <li>Conectar a los miembros del grupo, contar el tiempo gratis y comprobar las licencias Pro: es el servicio que pides al usarlo (artículo 6.1.b del RGPD).</li>
+      <li>Evitar abusos y mantener seguros la web y los servidores: interés legítimo (artículo 6.1.f).</li>
+      <li>Google Analytics: tu consentimiento (artículo 6.1.a), que puedes retirar en cualquier momento.</li>
+    </ul>
+    <p>No vendemos tus datos, no los usamos para publicidad ni para crear perfiles y no los compartimos con nadie más que con los proveedores siguientes.</p>
+
+    <h2>Proveedores y transferencias</h2>
+    <ul>
+      <li><strong>GitHub, Inc.</strong> (la web) y <strong>Cloudflare, Inc.</strong> (señalización, contador de tiempo y licencias, dominio, correo y credenciales de retransmisión). El contador y las licencias se guardan en servidores de la Unión Europea.</li>
+      <li><strong>Gumroad, Inc.</strong> (pagos de Pro), <strong>Google Ireland Ltd.</strong> (Analytics, solo con permiso), <strong>PeerJS</strong> (señalización de reserva) y <strong>ExpressTURN</strong> (retransmisión, solo cuando hace falta).</li>
+      <li>Algunos pueden tratar datos fuera del Espacio Económico Europeo con las garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo.</li>
+      <li>Las tiendas desde las que instales la extensión tienen sus propias políticas.</li>
+    </ul>
+
+    <h2>Tus derechos</h2>
+    <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación o portabilidad escribiendo a <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>. Como no sabemos quién eres, para encontrar tus datos necesitaremos tu clave Pro o el identificador al azar (está en el panel de SquadMeet). Si crees que no hemos atendido bien tu petición, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es/" rel="noopener">aepd.es</a>).</p>
+
+    <h2>Menores</h2>
+    <p>SquadMeet es solo para mayores de 18 años, la misma edad que exige Ome.tv.</p>
+
+    <h2>Cambios</h2>
+    <p>Si cambiamos esta política, lo indicaremos aquí con una nueva fecha.</p>
+  </div>
+</main>
+<footer class="pie">
+  <div class="ancho">
+    <a class="marca" href="/" aria-label="SquadMeet, inicio"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>SquadMeet</a>
+    <nav aria-label="Información">
+      <a href="/privacidad/">Privacidad</a>
+      <a href="/cookies/">Cookies</a>
+      <a href="/condiciones/">Condiciones</a>
+      <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>
+      <button class="boton-enlace" type="button" data-cookies="abrir">Configurar cookies</button>
+      <a href="/en/" hreflang="en" lang="en">English</a>
+    </nav>
+    <p class="aviso-legal">© 2026 SquadMeet. SquadMeet es un proyecto independiente y no tiene relación con Ome.tv. Solo para mayores de 18 años, como Ome.tv.</p>
+  </div>
+</footer>
+<section class="cookies" id="aviso-cookies" role="dialog" aria-labelledby="cookies-t" aria-describedby="cookies-d" data-ga="G-JFQ3VHGXZY" hidden>
+  <h2 id="cookies-t">Cookies</h2>
+  <p id="cookies-d">Usamos Google Analytics para saber cuántas personas visitan la web y qué páginas les sirven. Solo se activa si aceptas. <a href="/cookies/">Más información</a>.</p>
+  <div class="botones"><button class="boton pequeno" type="button" data-cookies="no">Rechazar</button><button class="boton primario pequeno" type="button" data-cookies="si">Aceptar</button></div>
+</section>
+<script src="/web.js?v=85832eae55"></script>
+</body>
+</html>

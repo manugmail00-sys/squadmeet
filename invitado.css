@@ -1,0 +1,79 @@
+/* Página de los amigos (/unirse/ y /join/). Fuera de la llamada, el estilo de la web (papel crema,
+   tinta negra, bordes gruesos); durante la llamada, fondo oscuro para que mande el vídeo. */
+
+@font-face { font-family: "Archivo Black"; src: url("fuentes/archivo-black.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Space Grotesk"; src: url("fuentes/space-grotesk.woff2") format("woff2"); font-weight: 300 700; font-display: swap; }
+
+:root {
+  color-scheme: light;
+  --papel: #fff6e5; --blanco: #ffffff; --tinta: #141210; --tinta-2: #3b3833; --tinta-3: #625d55;
+  --amarillo: #ffd43b; --coral: #ff6b57; --azul: #5b8cff; --verde: #2fd38a;
+  --borde: 3px solid var(--tinta);
+  --titulo: "Archivo Black", "Arial Black", system-ui, sans-serif;
+  --texto: "Space Grotesk", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; margin: 0; background: var(--papel); color: var(--tinta); }
+body { font: 16px/1.5 var(--texto); -webkit-font-smoothing: antialiased; overflow: hidden; }
+[hidden] { display: none !important; }
+button { font: inherit; color: inherit; -webkit-tap-highlight-color: transparent; }
+:focus-visible { outline: 3px solid var(--azul); outline-offset: 3px; }
+
+.pantalla { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: max(20px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom)); }
+#inicio, #fin { background: radial-gradient(circle at 1px 1px, rgba(20, 18, 16, .13) 1.5px, transparent 0) 0 0 / 22px 22px, var(--papel); }
+.marca { position: absolute; top: max(18px, env(safe-area-inset-top)); left: 0; right: 0; display: flex; align-items: center; justify-content: center; gap: 9px; font: 400 19px/1 var(--titulo); letter-spacing: -.02em; }
+.marca svg { width: 30px; height: 30px; }
+.tarjeta { width: 100%; max-width: 410px; background: var(--blanco); border: var(--borde); border-radius: 20px; padding: 26px 22px 22px; display: flex; flex-direction: column; gap: 16px; box-shadow: 7px 7px 0 var(--tinta); }
+.rejilla { width: 70px; height: 70px; display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin: 0 auto 2px; padding: 7px; background: var(--tinta); border-radius: 16px; }
+.rejilla span { border-radius: 6px; background: var(--amarillo); }
+.rejilla span:nth-child(2) { background: var(--coral); }
+.rejilla span:nth-child(3) { background: var(--azul); }
+.rejilla span:nth-child(4) { background: var(--verde); }
+h1 { margin: 0; font: 400 25px/1.1 var(--titulo); letter-spacing: -.01em; text-align: center; }
+p { margin: 0; color: var(--tinta-2); text-align: center; }
+label { display: flex; flex-direction: column; gap: 7px; font-size: 15px; font-weight: 700; }
+label .opcional { font-weight: 500; color: var(--tinta-3); }
+input { height: 52px; padding: 0 14px; border-radius: 12px; border: var(--borde); background: var(--papel); color: var(--tinta); font: 500 17px var(--texto); outline: none; }
+input:focus { background: var(--blanco); box-shadow: 3px 3px 0 var(--azul); }
+.boton { appearance: none; height: 56px; border: var(--borde); border-radius: 12px; font: 700 17px var(--texto); cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 9px; box-shadow: 5px 5px 0 var(--tinta); transition: transform 140ms cubic-bezier(.2, .8, .2, 1), box-shadow 140ms cubic-bezier(.2, .8, .2, 1); touch-action: manipulation; }
+.boton:active { transform: translate(4px, 4px); box-shadow: 1px 1px 0 var(--tinta); transition-duration: 60ms; }
+.boton:disabled { opacity: .65; cursor: progress; }
+.primario { color: var(--tinta); background: var(--amarillo); }
+.nota { font-size: 14px; color: var(--tinta-3); }
+.error { color: var(--tinta); background: var(--coral); border: 2px solid var(--tinta); border-radius: 10px; padding: 10px 12px; font-size: 15px; font-weight: 600; }
+
+/* Durante la llamada */
+#llamada { padding: 0; background: var(--tinta); color: var(--papel); }
+/* El vídeo acaba encima de los controles para que no tapen al grupo, que va abajo. */
+#remoto { position: absolute; top: env(safe-area-inset-top); left: 0; width: 100%; height: calc(100% - 96px - env(safe-area-inset-top) - env(safe-area-inset-bottom)); object-fit: contain; background: var(--tinta); }
+.pip { position: absolute; top: max(14px, env(safe-area-inset-top)); left: 14px; width: 96px; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 14px; border: 3px solid var(--papel); background: #2a2723; }
+.pip.espejo { transform: scaleX(-1); }
+.cartel { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); max-width: calc(100% - 48px); padding: 14px 18px; border-radius: 14px; background: var(--papel); color: var(--tinta); border: var(--borde); box-shadow: 4px 4px 0 var(--coral); text-align: center; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+.girando { width: 18px; height: 18px; border-radius: 50%; border: 3px solid rgba(20, 18, 16, .2); border-top-color: var(--tinta); animation: girar .8s linear infinite; flex: none; }
+@keyframes girar { to { transform: rotate(360deg); } }
+#sonido { top: auto; bottom: 124px; cursor: pointer; font: 700 16px var(--texto); }
+.controles { position: absolute; left: 0; right: 0; bottom: max(18px, env(safe-area-inset-bottom)); display: flex; justify-content: center; gap: 14px; }
+.control { appearance: none; width: 58px; height: 58px; border-radius: 50%; border: 3px solid var(--papel); cursor: pointer; display: grid; place-items: center; background: #2a2723; color: var(--papel); transition: background-color 140ms, transform 100ms; }
+.control:active { transform: scale(.93); }
+.control.apagado { background: var(--papel); color: var(--tinta); }
+.control.activo { background: var(--amarillo); color: var(--tinta); border-color: var(--amarillo); }
+.control.salir { background: var(--coral); color: var(--tinta); border-color: var(--coral); }
+.control svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+a.boton { text-decoration: none; color: var(--tinta); background: var(--blanco); }
+
+/* Chat del grupo y votos (Pro) */
+.flotantes { position: absolute; right: 14px; bottom: calc(96px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; gap: 12px; }
+.flotantes .control { position: relative; width: 52px; height: 52px; }
+.globo { position: absolute; top: -6px; right: -8px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 11px; background: var(--amarillo); color: var(--tinta); border: 2px solid var(--tinta); font: 800 12px/18px var(--texto); text-align: center; }
+.aviso { position: absolute; left: 50%; top: max(16px, env(safe-area-inset-top)); transform: translateX(-50%); max-width: calc(100% - 32px); margin: 0; padding: 10px 14px; border-radius: 12px; background: var(--amarillo); color: var(--tinta); border: var(--borde); font-weight: 700; text-align: center; z-index: 3; }
+.hoja { position: absolute; left: 0; right: 0; bottom: 0; z-index: 4; max-height: 62%; display: flex; flex-direction: column; background: var(--papel); color: var(--tinta); border-top: var(--borde); border-radius: 18px 18px 0 0; padding: 12px 14px max(14px, env(safe-area-inset-bottom)); }
+.hoja header { display: flex; align-items: center; justify-content: space-between; }
+.hoja h2 { margin: 0; font: 400 19px/1.1 var(--titulo); }
+.cerrar { appearance: none; width: 44px; height: 44px; border: 0; background: none; cursor: pointer; display: grid; place-items: center; }
+.cerrar svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; }
+#mensajes { list-style: none; margin: 8px 0 10px; padding: 10px; flex: 1; min-height: 80px; overflow: auto; display: flex; flex-direction: column; gap: 6px; background: var(--blanco); border: 2px solid var(--tinta); border-radius: 12px; font-size: 15px; }
+#mensajes b { font-weight: 700; }
+#form-chat { display: flex; gap: 8px; }
+#form-chat input { flex: 1; min-width: 0; height: 48px; }
+#form-chat .boton { height: 48px; padding: 0 16px; box-shadow: 3px 3px 0 var(--tinta); }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

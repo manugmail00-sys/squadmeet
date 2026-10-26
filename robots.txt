@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /unirse/
+Disallow: /join/
+
+Sitemap: https://squadmeet.app/sitemap.xml

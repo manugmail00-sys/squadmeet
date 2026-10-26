@@ -1,0 +1,79 @@
+<!doctype html>
+<!-- Plantilla de la página de los amigos: scripts/construir.mjs la convierte en sitio/unirse/ y sitio/join/. -->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<!--cabecera-->
+<title>Únete al grupo · SquadMeet</title>
+<meta name="description" content="Tu amigo te invita a salir con él en Ome.tv. Solo tienes que abrir este enlace.">
+<meta property="og:title" content="Únete a mi grupo en SquadMeet">
+<meta property="og:description" content="Sal conmigo en Ome.tv. No hace falta instalar nada.">
+<meta property="og:image" content="https://squadmeet.app/og.png">
+<!--/cabecera-->
+<meta name="twitter:card" content="summary_large_image">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' blob:; connect-src 'self' wss://senal.squadmeet.app wss://0.peerjs.com https://squadmeet-73y6k.pages.dev https://senal.squadmeet.app; object-src 'none'; base-uri 'self'; form-action 'self'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="theme-color" content="#fff6e5">
+<link rel="icon" href="../icono.png">
+<link rel="icon" href="../icono.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icono-180.png">
+<link rel="preload" href="../fuentes/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="../fuentes/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="../invitado.css?v=d3cc699e2b">
+</head>
+<body>
+<main>
+  <section id="inicio" class="pantalla">
+    <div class="marca"><svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>SquadMeet</div>
+    <div class="tarjeta">
+      <div class="rejilla" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <h1 data-t="titulo">Te han invitado a un grupo</h1>
+      <p data-t="entradilla">Vas a salir en Ome.tv con tu amigo. Tu cámara aparecerá junto a la suya y veréis juntos a la otra persona.</p>
+      <label><span><span data-t="tuNombre">Tu nombre</span> <span class="opcional" data-t="opcional">(opcional)</span></span><input id="nombre" maxlength="20" autocomplete="nickname" placeholder="Así te verá tu amigo" data-t-placeholder="comoTeVera"></label>
+      <p id="error-inicio" class="error" hidden></p>
+      <button id="unirme" class="boton primario" data-t="unirme">Unirme</button>
+      <p class="nota" data-t="notaInicio">Usa auriculares para que no haya eco. No hace falta instalar nada.</p>
+    </div>
+  </section>
+
+  <section id="llamada" class="pantalla" hidden>
+    <video id="remoto" playsinline autoplay></video>
+    <video id="yo" class="pip" muted playsinline autoplay></video>
+    <div id="estado" class="cartel"><span class="girando"></span><span id="estado-texto" data-t="conectandoAmigo">Conectando con tu amigo…</span></div>
+    <button id="sonido" class="cartel" hidden data-t="activarSonido">Toca para activar el sonido</button>
+    <p id="aviso" class="aviso" role="status" hidden></p>
+    <div class="flotantes">
+      <button id="b-votar" class="control" hidden aria-pressed="false" aria-label="Pedir siguiente" title="Pedir siguiente" data-t-aria="votar" data-t-title="votar"><svg viewBox="0 0 24 24"><path d="M5 6.5v11l8-5.5zM13 6.5v11l8-5.5z"/></svg><span class="globo" hidden></span></button>
+      <button id="b-chat" class="control" hidden aria-label="Chat del grupo" title="Chat del grupo" data-t-aria="chat" data-t-title="chat"><svg viewBox="0 0 24 24"><path d="M4.5 18.5V7A2.5 2.5 0 0 1 7 4.5h10A2.5 2.5 0 0 1 19.5 7v7a2.5 2.5 0 0 1-2.5 2.5H8.5z"/></svg><span class="globo" hidden></span></button>
+    </div>
+    <section id="chat" class="hoja" hidden aria-labelledby="chat-t">
+      <header><h2 id="chat-t" data-t="chat">Chat del grupo</h2><button id="cerrar-chat" class="cerrar" aria-label="Cerrar" data-t-aria="cerrar"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button></header>
+      <ul id="mensajes"></ul>
+      <form id="form-chat"><input id="texto-chat" maxlength="200" autocomplete="off" enterkeyhint="send" placeholder="Escribe al grupo…" aria-label="Escribe al grupo…" data-t-placeholder="escribir" data-t-aria="escribir"><button class="boton primario" data-t="enviar">Enviar</button></form>
+    </section>
+    <nav class="controles" aria-label="Controles" data-t-aria="controles">
+      <button id="b-mic" class="control" aria-label="Silenciar micrófono" title="Micrófono" data-t-aria="silenciarMic" data-t-title="microfono"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
+      <button id="b-cam" class="control" aria-label="Apagar cámara" title="Cámara" data-t-aria="apagarCam" data-t-title="camara"><svg viewBox="0 0 24 24"><rect x="3" y="6.5" width="12.5" height="11" rx="2.5"/><path d="m15.5 10.5 5-3v9l-5-3"/></svg></button>
+      <button id="b-girar" class="control" aria-label="Cambiar de cámara" title="Cambiar de cámara" hidden data-t-aria="girar" data-t-title="girar"><svg viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.5-2h4.4l1.5 2h1.8A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><path d="M9 12.5a3 3 0 0 1 5.2-2M15 12.5a3 3 0 0 1-5.2 2M14.5 8.5v2h-2M9.5 16.5v-2h2"/></svg></button>
+      <button id="b-espejo" class="control" aria-label="Invertir imagen" title="Invertir imagen" aria-pressed="false" data-t-aria="invertir" data-t-title="invertir"><svg viewBox="0 0 24 24"><path d="M12 3v2.5M12 9v2.5M12 15v2.5M12 21v-.5"/><path d="M9 7.5 3.5 17H9zM15 7.5l5.5 9.5H15z"/></svg></button>
+      <button id="b-salir" class="control salir" aria-label="Salir del grupo" title="Salir" data-t-aria="salirGrupo" data-t-title="salir"><svg viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17"/></svg></button>
+    </nav>
+  </section>
+
+  <section id="fin" class="pantalla" hidden>
+    <div class="tarjeta">
+      <h1 id="fin-titulo"></h1>
+      <p id="fin-texto"></p>
+      <button id="reintentar" class="boton primario" data-t="volver">Volver a entrar</button>
+      <a id="fin-enlace" class="boton" href="/" hidden data-t="crearTu">Crear mi propio grupo</a>
+    </div>
+  </section>
+</main>
+
+<script src="../web.js?v=85832eae55"></script>
+<script src="../senal.js?v=5446c5daae"></script>
+<script src="../invitado.js?v=e587a7c9e4"></script>
+</body>
+</html>
