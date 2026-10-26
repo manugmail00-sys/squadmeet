@@ -1,4 +1,4 @@
-/* SquadMeet 1.2.0 · https://squadmeet.app/ */
+/* SquadMeet 1.3.0 · https://squadmeet.app/ */
 (function () {
 'use strict';
 // SquadMeet — señalización compartida por el anfitrión (squad.js) y los invitados (unirse/).
@@ -236,10 +236,10 @@ else iniciarSquad();
 function iniciarSquad() {
   // La web va fijada al construir: la de producción, o la del servidor de pruebas.
   const SITIO = 'https://squadmeet.app/';
-  const VERSION = '1.2.0';
+  const VERSION = '1.3.0';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
-  const GUMROAD = { siempre: 'https://manuverse4317.gumroad.com/l/squadmeet-pro', mensual: 'https://manuverse4317.gumroad.com/l/squadmeet-pro-mensual' };
+  const TIENDA = { siempre: '', mensual: '' };
   const FPS = 24;
   const FPS_VISOR = 24;
   const KBPS_VISOR = 2500;
@@ -328,15 +328,15 @@ function iniciarSquad() {
       agotadoTextoExtra: 'Mañana tienes otros 10 minutos. Para seguir ahora, gana 30 minutos más o hazte Pro:',
       proSiempre: '5 €', proSiempreSub: 'para siempre', proMensual: '1,99 €', proMensualSub: 'al mes',
       ventajasPro: ['Sin límite de tiempo', 'Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
-      tengoClave: 'Tengo una clave', clavePlaceholder: 'Pega tu clave de Gumroad', activar: 'Activar', activando: 'Comprobando…', cancelar: 'Cancelar',
-      claveAyuda: 'Te llegó por correo al comprar Pro en Gumroad.',
+      tengoClave: 'Tengo una clave', clavePlaceholder: 'Pega tu clave de Pro', activar: 'Activar', activando: 'Comprobando…', cancelar: 'Cancelar',
+      claveAyuda: 'Te llegó por correo al comprar Pro.',
       proActivo: (p) => (p === 'mensual' ? 'Pro mensual activo' : 'Pro para siempre activo'),
       quitarClave: 'Quitar de este dispositivo',
       errores: {
-        invalida: 'Esa clave no existe. Cópiala tal cual del correo de Gumroad.',
+        invalida: 'Esa clave no existe. Cópiala tal cual del correo de la compra.',
         caducada: 'Esa clave ya no está activa (reembolsada o suscripción terminada).',
         limite: 'Esa clave ya se usa en 3 dispositivos. Quítala de uno o escríbenos.',
-        gumroad: 'No hemos podido comprobarla ahora. Prueba en un rato.',
+        tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.',
         despacio: 'Demasiados intentos. Espera un minuto.',
         red: 'No hay conexión con SquadMeet. Prueba en un rato.',
       },
@@ -418,15 +418,15 @@ function iniciarSquad() {
       agotadoTextoExtra: 'Tomorrow you get another 10 minutes. To keep going now, get 30 more minutes or go Pro:',
       proSiempre: '€5', proSiempreSub: 'forever', proMensual: '€1.99', proMensualSub: 'a month',
       ventajasPro: ['No time limit', 'Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
-      tengoClave: 'I have a key', clavePlaceholder: 'Paste your Gumroad key', activar: 'Activate', activando: 'Checking…', cancelar: 'Cancel',
-      claveAyuda: 'It came by email when you bought Pro on Gumroad.',
+      tengoClave: 'I have a key', clavePlaceholder: 'Paste your Pro key', activar: 'Activate', activando: 'Checking…', cancelar: 'Cancel',
+      claveAyuda: 'It came by email when you bought Pro.',
       proActivo: (p) => (p === 'mensual' ? 'Pro monthly active' : 'Pro forever active'),
       quitarClave: 'Remove from this device',
       errores: {
-        invalida: 'That key doesn’t exist. Copy it exactly from the Gumroad email.',
+        invalida: 'That key doesn’t exist. Copy it exactly from your purchase email.',
         caducada: 'That key is no longer active (refunded or subscription ended).',
         limite: 'That key is already used on 3 devices. Remove it from one or write to us.',
-        gumroad: 'We couldn’t check it right now. Try again in a while.',
+        tienda: 'We couldn’t check it right now. Try again in a while.',
         despacio: 'Too many tries. Wait a minute.',
         red: 'Can’t reach SquadMeet. Try again in a while.',
       },
@@ -1538,7 +1538,7 @@ function iniciarSquad() {
   // Cada día hay 10 minutos gratis con amigos conectados, y 30 más al compartir SquadMeet por
   // WhatsApp. Los cuenta nuestro servidor (senal/api.js) con un identificador al azar de este
   // navegador; si no se le puede llamar (algunas operadoras bloquean Cloudflare durante el fútbol),
-  // se sigue contando aquí. Con Pro (una clave de Gumroad) no hay límite.
+  // se sigue contando aquí. Con Pro (una clave de Payhip) no hay límite.
   const CLAVE_DISPOSITIVO = 'squadmeet:dispositivo', CLAVE_LICENCIA = 'squadmeet:licencia', CLAVE_USO = 'squadmeet:uso';
   const GRATIS = 600, EXTRA = 1800;
   // El día cambia a medianoche, hora de España, igual que en el servidor.
@@ -2226,8 +2226,8 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
   }
   function vistaMuro() {
     const planes = [
-      GUMROAD.siempre ? `<a class="boton oscuro plan-mini" href="${esc(GUMROAD.siempre)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>` : '',
-      GUMROAD.mensual ? `<a class="boton primario plan-mini" href="${esc(GUMROAD.mensual)}" target="_blank" rel="noopener"><b>${t.proMensual}</b><small>${t.proMensualSub}</small></a>` : '',
+      TIENDA.siempre ? `<a class="boton oscuro plan-mini" href="${esc(TIENDA.siempre)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>` : '',
+      TIENDA.mensual ? `<a class="boton primario plan-mini" href="${esc(TIENDA.mensual)}" target="_blank" rel="noopener"><b>${t.proMensual}</b><small>${t.proMensualSub}</small></a>` : '',
     ].join('');
     const agotadoHoy = sinTiempo();
     return `<div class="muro">

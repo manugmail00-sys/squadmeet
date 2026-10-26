@@ -142,6 +142,7 @@ details.otra summary { cursor: pointer; font-weight: 700; min-height: 44px; disp
 
 /* Precios */
 .planes { margin-top: 40px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: stretch; }
+.planes.dos { grid-template-columns: repeat(2, 1fr); max-width: 760px; margin-inline: auto; }
 .plan { position: relative; display: flex; flex-direction: column; background: var(--blanco); border: var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 26px 24px; }
 .plan.destacado { background: var(--amarillo); box-shadow: 8px 8px 0 var(--tinta); }
 .plan .pegatina { position: absolute; top: -18px; right: 16px; }
@@ -155,7 +156,7 @@ details.otra summary { cursor: pointer; font-weight: 700; min-height: 44px; disp
 .plan .boton { margin-top: auto; }
 .plan .letra-pequena { margin: 12px 0 0; font-size: 13.5px; color: var(--tinta-3); }
 .plan.destacado .letra-pequena { color: var(--tinta-2); }
-@media (max-width: 900px) { .planes { grid-template-columns: 1fr; max-width: 520px; } }
+@media (max-width: 900px) { .planes, .planes.dos { grid-template-columns: 1fr; max-width: 520px; } }
 
 /* Preguntas */
 .preguntas { margin-top: 36px; display: grid; gap: 14px; max-width: 860px; }
