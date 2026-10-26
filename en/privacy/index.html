@@ -16,21 +16,21 @@
 <link rel="apple-touch-icon" href="/icono-180.png">
 <link rel="preload" href="/fuentes/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/estilo.css?v=ebe31d628f">
+<link rel="stylesheet" href="/estilo.css?v=49aa5a250b">
 </head>
 <body>
 <a class="salto" href="#contenido">Skip to content</a>
 <header class="cabecera">
   <div class="ancho">
     <a class="marca" href="/en/" aria-label="SquadMeet, home"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>SquadMeet</a>
-    <nav aria-label="Language"><a class="idioma" href="/privacidad/" hreflang="es" lang="es">Español</a></nav>
+    <nav aria-label="Language"><a class="cuenta-nav" href="/en/account/" data-cuenta-nav><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="4"/><path d="M4.5 20c1.2-3.6 4-5.5 7.5-5.5s6.3 1.9 7.5 5.5"/></svg><span>Sign in</span></a><a class="idioma" href="/privacidad/" hreflang="es" lang="es">Español</a></nav>
   </div>
 </header>
 <main class="legal" id="contenido">
   <div class="ancho">
     <h1>Privacy policy</h1>
     <p class="fecha">Last updated: October 26, 2026</p>
-    <div class="resumen"><p>In short: SquadMeet has no accounts and no ads. Video and audio go directly and encrypted between your browsers: we don’t see or record them. For the free time we count minutes with a random identifier, without knowing who you are. On the website, Google Analytics only runs if you accept it.</p></div>
+    <div class="resumen"><p>In short: SquadMeet has no ads and you don’t need an account to use it for free. Video and audio go directly and encrypted between your browsers: we don’t see or record them. For the free time we count minutes with a random identifier, without knowing who you are. If you sign in to an account (for Pro), we keep an encrypted fingerprint of your email, not the email. On the website, Google Analytics only runs if you accept it.</p></div>
 
     <h2>Who is responsible</h2>
     <p>SquadMeet is an independent project. For any privacy question, write to <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>.</p>
@@ -47,7 +47,7 @@
       <li><strong>Signaling:</strong> so the browsers can find each other, our server relays some technical messages: random identifiers for the group and each person, the connection description and the network addresses needed (IPs and ports). Friends also send the name they type (optional), their browser language and their phone’s orientation. They’re only kept in memory while the connection lasts: nothing is stored. If our server isn’t available (some carriers sometimes block its IPs), they go through the public <a href="https://peerjs.com/" rel="noopener">PeerJS</a> server, which also just relays them.</li>
       <li><strong>Relay (TURN):</strong> if your networks don’t allow a direct connection, video goes through an <a href="https://www.expressturn.com/" rel="noopener">ExpressTURN</a> server. It stays end-to-end encrypted; the server sees IPs, not content.</li>
       <li><strong>Free time:</strong> to apply each day’s free minutes, SquadMeet creates a random identifier in your browser and sends our server the minutes you use with friends connected and whether you shared SquadMeet on WhatsApp that day. We keep that identifier, the day and the minutes for 30 days. We don’t link it to your name, your email or your Ome.tv account, and we don’t know who you send the WhatsApp message to.</li>
-      <li><strong>Pro:</strong> payment happens on <a href="https://payhip.com/privacy" rel="noopener">Payhip</a>, the platform we sell Pro through. Payhip and its payment processor (Stripe or PayPal) process your payment details; Payhip gives us your email and the purchase details so we can deliver your key, handle refunds and meet tax obligations, and we keep them for as long as the law requires. When you paste your key, our server asks Payhip whether it’s valid. We keep an encrypted fingerprint of the key (not the key), whether it’s still active and the random identifiers of the devices where you use it (up to 3), while the license is active and 30 more days. That check doesn’t store your email. If you buy from the panel, the panel sends our server the email you’re going to pay with, and Payhip tells us when you pay or get a refund; that’s how we turn Pro on in that browser. If you tap “Already Pro?”, we email you a link to turn it on (through <a href="https://resend.com/legal/privacy-policy" rel="noopener">Resend</a>). We don’t store the email, only an encrypted fingerprint of it, along with what you’ve paid for (and until when, for the 31-day one) and the random identifiers of your devices (up to 3), for up to 400 days after your last payment.</li>
+      <li><strong>Pro:</strong> payment happens on <a href="https://payhip.com/privacy" rel="noopener">Payhip</a>, the platform we sell Pro through. Payhip and its payment processor (Stripe or PayPal) process your payment details; Payhip gives us your email and the purchase details so we can deliver your key, handle refunds and meet tax obligations, and we keep them for as long as the law requires. When you paste your key, our server asks Payhip whether it’s valid. We keep an encrypted fingerprint of the key (not the key), whether it’s still active and the random identifiers of the devices where you use it (up to 3), while the license is active and 30 more days. That check doesn’t store your email. The email you pay with is also your <strong>SquadMeet account</strong>, which has no password: you sign in by showing you can read it (we send you a 6-digit code through <a href="https://resend.com/legal/privacy-policy" rel="noopener">Resend</a>) or by paying from that browser. For that, the panel or the website sends our server the email, and Payhip tells us when you pay or get a refund. We don’t store the email, only an encrypted fingerprint of it, along with what you’ve paid for (and until when, for the 31-day one), the random identifiers of the browsers you’re signed in on (up to 3), each one’s browser and system type (for example “Chrome · Windows”, so you can recognise them in “My account”) and when they were last used. Sign-in codes are stored encrypted and expire after 30 minutes. An account with payments is kept for up to 400 days after the last payment; without payments, it’s deleted after 30 days unused. You can sign out in “My account” or ask us to delete it.</li>
       <li><strong>The website:</strong> squadmeet.app is served by GitHub Pages, which processes visitors’ IPs to deliver the pages and protect them from attacks.</li>
     </ul>
 
@@ -107,6 +107,6 @@
   <p id="cookies-d">We use Google Analytics to know how many people visit the site and which pages help them. It only turns on if you accept. <a href="/en/cookies/">Learn more</a>.</p>
   <div class="botones"><button class="boton pequeno" type="button" data-cookies="no">Reject</button><button class="boton primario pequeno" type="button" data-cookies="si">Accept</button></div>
 </section>
-<script src="/web.js?v=26992f7edb"></script>
+<script src="/web.js?v=c2a6d0d4ac"></script>
 </body>
 </html>

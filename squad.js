@@ -1,4 +1,4 @@
-/* SquadMeet 1.5.0 · https://squadmeet.app/ */
+/* SquadMeet 1.6.0 · https://squadmeet.app/ */
 (function () {
 'use strict';
 // SquadMeet — señalización compartida por el anfitrión (squad.js) y los invitados (unirse/).
@@ -239,10 +239,13 @@ function iniciarSquad() {
   // En la extensión hay un puente (puente.js) que comparte este navegador con squadmeet.app: lo que se
   // pague en la web vale aquí sin hacer nada. En el favorito y el userscript no lo hay.
   const EN_EXTENSION = '__EXTENSION__' === 'si';
-  const VERSION = '1.5.0';
+  const VERSION = '1.6.0';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
   const TIENDA = { siempre: 'https://payhip.com/b/df4JA', pase: 'https://payhip.com/b/p2QYe' };
+  // «Continuar con Google» (solo con la extensión: el inicio de sesión acaba en squadmeet.app y el puente
+  // lo trae aquí). Sale si al construir hay Google configurado.
+  const GOOGLE = '' === 'si';
   const FPS = 24;
   const FPS_VISOR = 24;
   const KBPS_VISOR = 2500;
@@ -333,29 +336,33 @@ function iniciarSquad() {
       ventajasPro: ['Sin límite de tiempo', 'Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
       tengoClave: 'Tengo una clave', clavePlaceholder: 'Pega tu clave de Pro', activar: 'Activar', activando: 'Comprobando…', cancelar: 'Cancelar',
       claveAyuda: 'Te llegó por correo al comprar Pro.',
-      correoEtiqueta: 'Tu correo (el mismo con el que pagarás)', correoPlaceholder: 'tucorreo@ejemplo.com',
+      correoEtiqueta: 'Tu correo (será tu cuenta: úsalo también al pagar)', correoPlaceholder: 'tucorreo@ejemplo.com',
+      pagarasCon: (c) => `Pagarás con tu cuenta, <b>${c}</b>.`,
       esperandoTitulo: 'Completa el pago en Payhip',
       esperandoTexto: (c) => `Paga con <b>${c}</b>. En cuanto termines, Pro se activa solo aquí. No cierres ome.tv.`,
+      esperandoOtro: '¿Pagaste con otro correo? Entra con él',
       otroCorreo: 'Cambiar de correo', yaPro: '¡Ya eres Pro!',
-      bienvenidaTexto: 'Pro activado en este navegador. Ya tienes:', empezar: 'Empezar',
-      bienvenidaNota: 'Si cambias de ordenador o borras los datos del navegador, pulsa «¿Ya eres Pro?» y pon este correo.',
-      yaEresPro: '¿Ya eres Pro?', recuperarTexto: 'Escribe el correo con el que pagaste y te mandamos un enlace para activarlo aquí. Sin contraseñas.',
-      mandarEnlace: 'Mandarme el enlace', mandando: 'Enviando…',
-      revisaTitulo: 'Mira tu correo',
-      revisaTexto: (c) => `Si <b>${c}</b> tiene Pro, te acaba de llegar un enlace. Ábrelo (en el móvil o aquí) y este navegador se pone en Pro solo.`,
-      revisaNota: '¿No llega? Mira en spam y comprueba que es el correo con el que pagaste.', reenviar: 'Mandarlo otra vez',
-      proActivo: (p, hasta) => (p === 'pase' ? `Pro hasta el ${new Date(hasta).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}` : 'Pro para siempre activo'),
+      bienvenidaTexto: 'Pro activado en tu cuenta. Ya tienes:', empezar: 'Empezar',
+      bienvenidaNota: (c) => `Tu cuenta es ${c}. En otro navegador o en el móvil, pulsa «Entrar» y escribe este correo.`,
+      entrar: 'Entrar', yaTienesCuenta: '¿Ya tienes cuenta? Entrar', entrarTitulo: 'Entra en tu cuenta',
+      entrarTexto: 'Sin contraseñas: te mandamos un código de 6 cifras. Si tu cuenta tiene Pro, se activa aquí.',
+      google: 'Continuar con Google', oCorreo: 'o con tu correo', mandarCodigo: 'Enviarme un código', mandando: 'Enviando…',
+      codigoTitulo: 'Mira tu correo', codigoTexto: (c) => `Escribe el código de 6 cifras que te hemos mandado a <b>${c}</b>.`,
+      codigoNota: '¿No llega? Mira en spam.', reenviar: 'Mandarlo otra vez', entrarBoton: 'Entrar', comprobandoCodigo: 'Comprobando…',
+      hasEntrado: 'Has entrado en tu cuenta', miCuenta: 'Mi cuenta', salir: 'Salir', cuentaRuta: 'cuenta/',
+      proActivo: (p, hasta) => (p === 'pase' ? `Pro hasta el ${new Date(hasta).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}` : 'Pro para siempre'),
       quedan: (d) => (d <= 1 ? 'Tu Pro se acaba hoy' : `Te quedan ${d} días de Pro`), renovar: 'Renovar 31 días',
       paseNota: 'Sin suscripción: no se renueva solo.',
       quitarClave: 'Quitar de este dispositivo',
       errores: {
         invalida: 'Esa clave no existe. Cópiala tal cual del correo de la compra.',
         correo: 'Escribe bien tu correo.',
-        'sin-correo': 'Ahora no podemos mandar correos. Usa «Tengo una clave».', envio: 'No hemos podido mandar el correo. Prueba en un rato.',
+        'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', envio: 'No hemos podido mandar el correo. Prueba en un rato.',
+        codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.',
         caducada: 'Esa clave ya no está activa (reembolsada o suscripción terminada).',
         limite: 'Esa clave ya se usa en 3 dispositivos. Quítala de uno o escríbenos.',
         tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.',
-        despacio: 'Demasiados intentos. Espera un minuto.',
+        despacio: 'Demasiados intentos. Espera un poco.',
         red: 'No hay conexión con SquadMeet. Prueba en un rato.',
       },
       chat: 'Chat del grupo', escribir: 'Escribe al grupo…', enviar: 'Enviar', chatVacio: 'Solo lo veis vosotros.',
@@ -438,29 +445,33 @@ function iniciarSquad() {
       ventajasPro: ['No time limit', 'Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
       tengoClave: 'I have a key', clavePlaceholder: 'Paste your Pro key', activar: 'Activate', activando: 'Checking…', cancelar: 'Cancel',
       claveAyuda: 'It came by email when you bought Pro.',
-      correoEtiqueta: 'Your email (the one you’ll pay with)', correoPlaceholder: 'you@example.com',
+      correoEtiqueta: 'Your email (it becomes your account: pay with it too)', correoPlaceholder: 'you@example.com',
+      pagarasCon: (c) => `You’ll pay with your account, <b>${c}</b>.`,
       esperandoTitulo: 'Finish paying on Payhip',
       esperandoTexto: (c) => `Pay with <b>${c}</b>. As soon as you’re done, Pro turns on here by itself. Don’t close ome.tv.`,
+      esperandoOtro: 'Paid with another email? Sign in with it',
       otroCorreo: 'Use another email', yaPro: 'You’re Pro now!',
-      bienvenidaTexto: 'Pro is on in this browser. You now have:', empezar: 'Let’s go',
-      bienvenidaNota: 'If you switch computers or clear your browser data, tap “Already Pro?” and enter this email.',
-      yaEresPro: 'Already Pro?', recuperarTexto: 'Type the email you paid with and we’ll send you a link to turn it on here. No passwords.',
-      mandarEnlace: 'Send me the link', mandando: 'Sending…',
-      revisaTitulo: 'Check your email',
-      revisaTexto: (c) => `If <b>${c}</b> has Pro, a link is on its way. Open it (on your phone or here) and this browser turns Pro by itself.`,
-      revisaNota: 'Nothing? Check spam and make sure it’s the email you paid with.', reenviar: 'Send it again',
-      proActivo: (p, hasta) => (p === 'pase' ? `Pro until ${new Date(hasta).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}` : 'Pro forever active'),
+      bienvenidaTexto: 'Pro is on in your account. You now have:', empezar: 'Let’s go',
+      bienvenidaNota: (c) => `Your account is ${c}. On another browser or your phone, tap “Sign in” and type this email.`,
+      entrar: 'Sign in', yaTienesCuenta: 'Have an account? Sign in', entrarTitulo: 'Sign in to your account',
+      entrarTexto: 'No passwords: we email you a 6-digit code. If your account has Pro, it turns on here.',
+      google: 'Continue with Google', oCorreo: 'or with your email', mandarCodigo: 'Email me a code', mandando: 'Sending…',
+      codigoTitulo: 'Check your email', codigoTexto: (c) => `Type the 6-digit code we sent to <b>${c}</b>.`,
+      codigoNota: 'Not there? Check spam.', reenviar: 'Send it again', entrarBoton: 'Sign in', comprobandoCodigo: 'Checking…',
+      hasEntrado: 'You’re signed in', miCuenta: 'My account', salir: 'Sign out', cuentaRuta: 'en/account/',
+      proActivo: (p, hasta) => (p === 'pase' ? `Pro until ${new Date(hasta).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}` : 'Pro forever'),
       quedan: (d) => (d <= 1 ? 'Your Pro ends today' : `${d} days of Pro left`), renovar: 'Renew 31 days',
       paseNota: 'No subscription: it doesn’t renew by itself.',
       quitarClave: 'Remove from this device',
       errores: {
         invalida: 'That key doesn’t exist. Copy it exactly from your purchase email.',
         correo: 'Check your email address.',
-        'sin-correo': 'We can’t send emails right now. Use “I have a key”.', envio: 'We couldn’t send the email. Try again in a while.',
+        'sin-correo': 'We can’t send emails right now. Try again in a while.', envio: 'We couldn’t send the email. Try again in a while.',
+        codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.',
         caducada: 'That key is no longer active (refunded or subscription ended).',
         limite: 'That key is already used on 3 devices. Remove it from one or write to us.',
         tienda: 'We couldn’t check it right now. Try again in a while.',
-        despacio: 'Too many tries. Wait a minute.',
+        despacio: 'Too many tries. Wait a moment.',
         red: 'Can’t reach SquadMeet. Try again in a while.',
       },
       chat: 'Group chat', escribir: 'Write to the group…', enviar: 'Send', chatVacio: 'Only you can see it.',
@@ -1571,26 +1582,31 @@ function iniciarSquad() {
   // Cada día hay 10 minutos gratis con amigos conectados, y 30 más al compartir SquadMeet por
   // WhatsApp. Los cuenta nuestro servidor (senal/api.js) con un identificador al azar de este
   // navegador; si no se le puede llamar (algunas operadoras bloquean Cloudflare durante el fútbol),
-  // se sigue contando aquí. Con Pro (una clave de Payhip) no hay límite.
+  // se sigue contando aquí. Con Pro (en la cuenta, o con una clave de Payhip) no hay límite. La cuenta es
+  // el correo (sin contraseñas): se entra con un código que llega por correo, o pagando desde aquí.
   const CLAVE_DISPOSITIVO = 'squadmeet:dispositivo', CLAVE_LICENCIA = 'squadmeet:licencia', CLAVE_USO = 'squadmeet:uso', CLAVE_CORREO = 'squadmeet:correo';
   const GRATIS = 600, EXTRA = 1800;
   // El día cambia a medianoche, hora de España, igual que en el servidor.
   const DIA = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' });
   const hoy = () => DIA.format(new Date());
-  let plan = { pro: false, plan: null, hasta: 0, dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false, cada: 60, error: '' };
+  let plan = { pro: false, plan: null, hasta: 0, cuenta: false, dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false, cada: 60, error: '' };
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE_USO));
     if (g) {
       plan.pro = !!g.pro;
       plan.plan = g.plan || null;
       plan.hasta = g.hasta || 0;
+      plan.cuenta = !!g.cuenta;
       if (g.dia === hoy()) Object.assign(plan, { restantes: g.restantes, limite: g.limite, extra: !!g.extra });
     }
   } catch {}
   let gasto = 0;                // segundos contados aquí que el servidor aún no sabe
   let contando = false, ultimoLatido = 0, latiendo = false, avisadoMinuto = false;
   let agotado = false, cortarAlSiguiente = false;
-  let vista = '';               // '' normal, 'clave' escribiendo la clave, 'muro' (sin tiempo) o 'esperando' (pagando)
+  // '' normal, 'muro' (hazte Pro, o sin tiempo), 'esperando' (pagando), 'entrar' (correo), 'codigo' (el del
+  // correo), 'clave' (escribiendo la clave) o 'bienvenida' (recién hecho Pro)
+  let vista = '';
+  let correoPedido = '', pedidoEn = 0;  // a qué correo se mandó el código para entrar, y cuándo
   let mensajeClave = '', comprobando = false;
   let esperandoDesde = 0;       // cuándo se abrió Payhip para pagar con el correo
   const ESPERA = 30 * 60 * 1000;
@@ -1613,7 +1629,7 @@ function iniciarSquad() {
   const licencia = () => { try { return localStorage.getItem(CLAVE_LICENCIA) || ''; } catch { return ''; } };
   const correoGuardado = () => { try { return localStorage.getItem(CLAVE_CORREO) || ''; } catch { return ''; } };
   function guardarPlan() {
-    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
+    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, cuenta: plan.cuenta, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
   }
 
   // El puente contesta con el dispositivo y el correo del almacén de la extensión (y vuelve a avisar si
@@ -1627,13 +1643,21 @@ function iniciarSquad() {
       try {
         if (/^[a-z0-9]{16,40}$/.test(e.data.dispositivo || '')) localStorage.setItem(CLAVE_DISPOSITIVO, e.data.dispositivo);
         if (e.data.correo) localStorage.setItem(CLAVE_CORREO, e.data.correo);
+        else localStorage.removeItem(CLAVE_CORREO);
       } catch {}
       avisar();
       if (e.data.motivo === 'cambio') cargarPlan();
     });
     window.postMessage({ tipo: 'squadmeet:puente?' }, location.origin);
   }
-  const contarCorreo = (correo) => { if (EN_EXTENSION) window.postMessage({ tipo: 'squadmeet:correo', correo }, location.origin); };
+  // El correo de la cuenta: aquí y, con la extensión, también en squadmeet.app ('' es haber salido).
+  function guardarCorreo(correo) {
+    try { if (correo) localStorage.setItem(CLAVE_CORREO, correo); else localStorage.removeItem(CLAVE_CORREO); } catch {}
+    if (EN_EXTENSION) window.postMessage({ tipo: 'squadmeet:correo', correo }, location.origin);
+  }
+  // La caja de Payhip directamente (sin pasar por la ficha del producto).
+  const caja = (url) => { const m = /payhip\.com\/b\/(\w+)/.exec(url || ''); return m ? `https://payhip.com/buy?link=${m[1]}` : url; };
+  const idioma = /^es\b/i.test(navigator.language || '') ? 'es' : 'en';
   async function llamarApi(ruta, extra = {}) {
     await puenteListo;
     const cuerpo = { dispositivo: dispositivo(), clave: licencia(), correo: correoGuardado(), ...extra };
@@ -1649,7 +1673,7 @@ function iniciarSquad() {
   function aplicar(d, enviados = 0) {
     const eraPro = plan.pro;
     gasto = Math.max(0, gasto - enviados);
-    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, hasta: d.hasta || 0, dia: d.dia || hoy(), restantes: d.restantes, limite: d.limite, extra: !!d.extra, cada: d.cada || 60, error: d.error || '' });
+    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, hasta: d.hasta || 0, cuenta: !!d.cuenta, dia: d.dia || hoy(), restantes: d.restantes, limite: d.limite, extra: !!d.extra, cada: d.cada || 60, error: d.error || '' });
     if (restantes() > 60) avisadoMinuto = false;
     if (!sinTiempo()) {
       agotado = false;
@@ -1657,7 +1681,9 @@ function iniciarSquad() {
       if (vista === 'muro') vista = '';
     }
     guardarPlan();
-    if (plan.pro && (vista === 'esperando' || vista === 'revisa')) { vista = 'bienvenida'; anunciar(t.yaPro); }
+    if (plan.pro && vista === 'esperando') { vista = 'bienvenida'; anunciar(t.yaPro); }
+    // Ha entrado en la cuenta (con el código, o en squadmeet.app con la extensión).
+    if (plan.cuenta && (vista === 'entrar' || vista === 'codigo')) { vista = plan.pro ? 'bienvenida' : ''; anunciar(plan.pro ? t.yaPro : t.hasEntrado); }
     if (eraPro !== plan.pro) cambioDePlan();
   }
   async function cargarPlan() {
@@ -1790,46 +1816,73 @@ function iniciarSquad() {
   }
   // Pro sin claves: se apunta este navegador con el correo y se abre Payhip. Cuando Payhip avisa del pago
   // a nuestro servidor, este navegador pasa a Pro; mientras, se pregunta cada 5 segundos.
+  // Con cuenta se paga con su correo; sin ella, el que se escriba será la cuenta.
   function pagar(cual) {
-    const correo = ((raiz.querySelector('[data-conservar="correo"]') || {}).value || '').trim();
+    const correo = plan.cuenta && correoGuardado() ? correoGuardado() : ((raiz.querySelector('[data-conservar="correo"]') || {}).value || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) { mensajeClave = t.errores.correo; pintarPanel(); return; }
     // Se abre ya (dentro del clic), o el navegador bloquearía la ventana.
-    window.open(TIENDA[cual], '_blank', 'noopener');
-    try { localStorage.setItem(CLAVE_CORREO, correo); } catch {}
-    contarCorreo(correo);
+    window.open(caja(TIENDA[cual]), '_blank', 'noopener');
+    if (correo !== correoGuardado()) guardarCorreo(correo);
     mensajeClave = '';
     vista = 'esperando';
     esperandoDesde = Date.now();
     pintarPanel();
     llamarApi('comprar', { correo }).then(aplicar).catch(() => {});
   }
-  // «¿Ya eres Pro?»: se pide el enlace por correo y se espera a que lo abra (en cualquier dispositivo).
-  async function pedirEnlace() {
-    const correo = ((raiz.querySelector('[data-conservar="correo"]') || {}).value || correoGuardado()).trim();
+  // «Entrar»: se manda un código al correo; al escribirlo, este navegador entra en la cuenta (y es Pro si
+  // la cuenta lo es). Con la extensión, el botón del correo o Google en squadmeet.app también valen.
+  async function pedirCodigo() {
+    const correo = ((raiz.querySelector('[data-conservar="correo"]') || {}).value || correoPedido || correoGuardado()).trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) { mensajeClave = t.errores.correo; pintarPanel(); return; }
-    try { localStorage.setItem(CLAVE_CORREO, correo); } catch {}
-    contarCorreo(correo);
     comprobando = true;
     mensajeClave = '';
     pintarPanel();
     try {
-      aplicar(await llamarApi('entrar', { correo, idioma: /^es\b/i.test(navigator.language || '') ? 'es' : 'en' }));
-      if (!plan.pro) { vista = 'revisa'; esperandoDesde = Date.now(); }
+      await llamarApi('acceder', { correo, idioma });
+      correoPedido = correo;
+      pedidoEn = Date.now();
+      vista = 'codigo';
+      setTimeout(pintarPanel, 30500);
+    } catch (e) {
+      // Ya se mandó uno hace nada: vale ese.
+      if (e.message === 'despacio' && correo === correoPedido) vista = 'codigo';
+      else mensajeClave = t.errores[e.message] || t.errores.red;
+    }
+    comprobando = false;
+    pintarPanel();
+    const c = raiz.querySelector('[data-conservar="codigo"]');
+    if (c) c.focus();
+  }
+  async function verificarCodigo(valor) {
+    const codigo = String(valor || '').replace(/\D/g, '');
+    if (codigo.length !== 6) { mensajeClave = t.errores.codigo; pintarPanel(); return; }
+    if (comprobando) return;
+    comprobando = true;
+    mensajeClave = '';
+    pintarPanel();
+    try {
+      const d = await llamarApi('verificar', { correo: correoPedido, codigo });
+      guardarCorreo(correoPedido);
+      aplicar(d);
     } catch (e) {
       mensajeClave = t.errores[e.message] || t.errores.red;
+      const c = raiz.querySelector('[data-conservar="codigo"]');
+      if (c) c.value = '';
     }
     comprobando = false;
     pintarPanel();
   }
   setInterval(() => {
-    if (vista !== 'esperando' && vista !== 'revisa') return;
+    if (vista !== 'esperando') return;
     if (Date.now() - esperandoDesde > ESPERA) { vista = 'muro'; pintarPanel(); return; }
     cargarPlan();
   }, 5000);
-  async function soltarClave() {
-    try { await llamarApi('soltar'); } catch {}
-    try { localStorage.removeItem(CLAVE_LICENCIA); localStorage.removeItem(CLAVE_CORREO); } catch {}
-    Object.assign(plan, { pro: false, plan: null });
+  // Salir de la cuenta en este navegador (y quitar la clave, si la había).
+  async function salirDeCuenta() {
+    try { await llamarApi('salir'); } catch {}
+    try { localStorage.removeItem(CLAVE_LICENCIA); } catch {}
+    guardarCorreo('');
+    Object.assign(plan, { pro: false, plan: null, cuenta: false });
     guardarPlan();
     cambioDePlan();
     cargarPlan();
@@ -1873,6 +1926,7 @@ function iniciarSquad() {
   // ── Panel ─────────────────────────────────────────────────────────────────────────────────────
 
   const ICONOS = {
+    google: '<svg viewBox="0 0 48 48" aria-hidden="true" class="color"><path fill="#ffc107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#ff3d00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4caf50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976d2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>',
     marca: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>',
     whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.4 18.6z"/><path d="M9.2 9.3c.3 2.4 2.6 4.8 5.3 5.3l1-1.3-1.8-1-.9.7c-.9-.4-1.8-1.3-2.2-2.2l.7-.9-1-1.8z"/></svg>',
     enviar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 3.5 11l6.5 2.5L12.5 20z"/><path d="m10 13.5 4-4"/></svg>',
@@ -2071,6 +2125,15 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
 @keyframes latido { 50% { opacity: .35; } }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
 .icono-btn[data-accion="espejo"][aria-pressed="true"] { background: var(--amarillo); border-color: var(--tinta); }
+
+/* Cuenta: entrar con un código, Google y la línea «correo · Mi cuenta · Salir» */
+.boton.google svg.color { width: 18px; height: 18px; stroke: none; }
+.boton.google { gap: 8px; }
+.nota.separador { text-align: center; margin: -2px 0; }
+.campo-codigo { font: 800 22px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; letter-spacing: .3em; text-align: center; }
+.linea-cuenta { display: flex; align-items: center; flex-wrap: wrap; gap: 0 5px; margin-top: 2px; }
+.linea-cuenta .correo { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 600; color: var(--tinta-2); }
+.linea-cuenta .enlace-texto { height: auto; margin: 0; padding: 0; font-size: 12.5px; color: inherit; cursor: pointer; }
 `;
 
   let anfitrion, raiz, vozAlta, plegado = false, copiado = false;
@@ -2098,7 +2161,18 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     });
     // Lo que escribes en el panel no le llega a ome.tv (sus atajos de teclado saltarían al siguiente).
     for (const tipo of ['keydown', 'keyup', 'keypress']) raiz.addEventListener(tipo, (e) => { if (e.target.matches('input')) e.stopPropagation(); });
-    raiz.addEventListener('input', (e) => { if (e.target.matches('.vol')) cambiarVolumen(Number(e.target.value)); });
+    // Intro en el correo, el código o la clave hace lo mismo que su botón.
+    raiz.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' || !e.target.matches('[data-conservar]')) return;
+      const campo = e.target.dataset.conservar;
+      if (campo === 'correo' && vista === 'entrar') pedirCodigo();
+      else if (campo === 'codigo') verificarCodigo(e.target.value);
+      else if (campo === 'clave') activarClave(e.target.value);
+    });
+    raiz.addEventListener('input', (e) => {
+      if (e.target.matches('.vol')) cambiarVolumen(Number(e.target.value));
+      if (e.target.matches('[data-conservar="codigo"]') && e.target.value.replace(/\D/g, '').length === 6) verificarCodigo(e.target.value);
+    });
     raiz.addEventListener('pointerdown', (e) => {
       if (e.target.matches('.vol')) tocandoVolumen = true;
       empezarArrastre(e);
@@ -2250,10 +2324,10 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       cuerpo = vistaClave();
     } else if (vista === 'esperando') {
       cuerpo = vistaEsperando();
-    } else if (vista === 'recuperar') {
-      cuerpo = vistaRecuperar();
-    } else if (vista === 'revisa') {
-      cuerpo = vistaRevisa();
+    } else if (vista === 'entrar') {
+      cuerpo = vistaEntrar();
+    } else if (vista === 'codigo') {
+      cuerpo = vistaCodigo();
     } else if (vista === 'bienvenida') {
       cuerpo = vistaBienvenida();
     } else if (!grupo && (vista === 'muro' || sinTiempo())) {
@@ -2352,30 +2426,38 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <span class="barra"><i style="width:${Math.min(100, (quedan / plan.limite) * 100)}%"></i></span>
       ${plan.extra ? '' : `<button class="mas" data-accion="whatsapp">${t.ganar30}</button>`}
       <button class="mas" data-accion="muro">${t.hazPro}</button>
-      <button class="mas suave" data-accion="recuperar">${t.yaEresPro}</button>
+      ${plan.cuenta ? '' : `<button class="mas suave" data-accion="entrar">${t.entrar}</button>`}
     </div>`;
   }
+  // Con quién has entrado: el correo, «Mi cuenta» (en squadmeet.app) y «Salir».
+  function lineaCuenta() {
+    if (!plan.cuenta || !correoGuardado()) return '';
+    return `<p class="nota linea-cuenta"><span class="correo">${esc(correoGuardado())}</span> · <a class="enlace-texto" href="${esc(SITIO + t.cuentaRuta)}" target="_blank" rel="noopener">${t.miCuenta}</a> · <button class="boton enlace-texto" data-accion="salir">${t.salir}</button></p>`;
+  }
   function bloquePlan() {
-    if (!plan.pro) return bloqueTiempo();
+    if (!plan.pro) return bloqueTiempo() + lineaCuenta();
     if (plan.plan === 'pase') {
       const dias = Math.ceil((plan.hasta - Date.now()) / 86400000);
       return `<div class="pase ${dias <= 3 ? 'acaba' : ''}">
         <p class="nota">${dias <= 3 ? `<b>${t.quedan(dias)}</b>` : t.proActivo('pase', plan.hasta)}</p>
         <button class="mas" data-accion="muro">${t.renovar}</button>
-      </div>`;
+      </div>${lineaCuenta()}`;
     }
-    return `<p class="nota">${t.proActivo(plan.plan)} · <button class="boton enlace-texto" data-accion="soltar">${t.quitarClave}</button></p>`;
+    // Pro con una clave y sin cuenta: se puede quitar de este navegador.
+    if (!plan.cuenta) return `<p class="nota">${t.proActivo(plan.plan)} · <button class="boton enlace-texto" data-accion="salir">${t.quitarClave}</button></p>`;
+    return `<p class="nota">${t.proActivo(plan.plan)}</p>${lineaCuenta()}`;
   }
   function vistaMuro() {
-    // Con enlace de Payhip: correo y pagar (Pro se activa solo). Sin él, a los precios de la web.
+    // Con enlace de Payhip: pagar (con el correo de la cuenta, o el que se escriba) y Pro se activa solo.
+    // Sin él, a los precios de la web.
     const directo = !!TIENDA.siempre;
     const planes = directo ? [
       `<button class="boton oscuro plan-mini" data-accion="pagar" data-plan="siempre"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></button>`,
       TIENDA.pase ? `<button class="boton primario plan-mini" data-accion="pagar" data-plan="pase"><b>${t.proPase}</b><small>${t.proPaseSub}</small></button>` : '',
     ].join('') : `<a class="boton oscuro plan-mini" href="${esc(SITIO + t.precios)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>`;
-    const campoCorreo = directo ? `<label class="nota" for="sm-correo">${t.correoEtiqueta}</label>
+    const campoCorreo = !directo ? '' : plan.cuenta && correoGuardado() ? `<p class="nota">${t.pagarasCon(esc(correoGuardado()))}</p>${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}` : `<label class="nota" for="sm-correo">${t.correoEtiqueta}</label>
       <div class="fila-clave"><input class="campo" id="sm-correo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false"></div>
-      ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}` : '';
+      ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}`;
     const agotadoHoy = sinTiempo();
     return `<div class="muro">
       ${agotadoHoy ? `<h2>${t.agotadoTitulo}</h2><p class="texto">${plan.extra ? t.agotadoTexto : t.agotadoTextoExtra}</p>` : `<h2>${t.hazPro}</h2>`}
@@ -2384,7 +2466,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       ${campoCorreo}
       ${planes ? `<div class="planes-mini">${planes}</div>` : ''}
       ${directo && TIENDA.pase ? `<p class="nota">${t.paseNota}</p>` : ''}
-      <button class="boton enlace-texto" data-accion="recuperar">${t.yaEresPro}</button>
+      ${plan.cuenta ? '' : `<button class="boton enlace-texto" data-accion="entrar">${t.yaTienesCuenta}</button>`}
       ${agotadoHoy ? '' : `<button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>`}
     </div>`;
   }
@@ -2395,31 +2477,32 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <p class="texto">${t.bienvenidaTexto}</p>
       <ul class="ventajas">${t.ventajasPro.map((v) => `<li>${v}</li>`).join('')}</ul>
       <button class="boton primario" data-accion="cancelar">${t.empezar}</button>
-      <p class="nota">${t.bienvenidaNota}</p>
+      ${plan.cuenta && correoGuardado() ? `<p class="nota">${t.bienvenidaNota(esc(correoGuardado()))}</p>` : ''}
     </div>`;
   }
-  function vistaRecuperar() {
+  function vistaEntrar() {
     return `<div class="muro">
-      <h2>${t.yaEresPro}</h2>
-      <p class="texto">${t.recuperarTexto}</p>
-      <div class="fila-clave"><input class="campo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" aria-label="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false"></div>
+      <h2>${t.entrarTitulo}</h2>
+      <p class="texto">${t.entrarTexto}</p>
+      ${EN_EXTENSION && GOOGLE ? `<a class="boton secundario google" href="${esc(API)}google?l=${idioma}" target="_blank" rel="noopener">${ICONOS.google}${t.google}</a><p class="nota separador">${t.oCorreo}</p>` : ''}
+      <div class="fila-clave"><input class="campo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoPedido || correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" aria-label="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false" enterkeyhint="send"></div>
       ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}
-      <button class="boton primario" data-accion="entrar" ${comprobando ? 'disabled' : ''}>${comprobando ? t.mandando : t.mandarEnlace}</button>
+      <button class="boton primario" data-accion="pedir-codigo" ${comprobando ? 'disabled' : ''}>${comprobando ? t.mandando : t.mandarCodigo}</button>
       <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
       <button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>
     </div>`;
   }
-  function vistaRevisa() {
-    const puedeReenviar = Date.now() - esperandoDesde > 60000;
+  function vistaCodigo() {
+    const puedeReenviar = Date.now() - pedidoEn > 30000;
     return `<div class="muro">
-      <h2>${t.revisaTitulo}</h2>
-      <p class="texto">${t.revisaTexto(esc(correoGuardado()))}</p>
-      <span class="cargando" aria-hidden="true"></span>
-      <p class="nota">${t.revisaNota}</p>
+      <h2>${t.codigoTitulo}</h2>
+      <p class="texto">${t.codigoTexto(esc(correoPedido))}</p>
+      <div class="fila-clave"><input class="campo campo-codigo" data-conservar="codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" aria-label="${esc(t.codigoTitulo)}" spellcheck="false" enterkeyhint="go"></div>
       ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}
-      ${puedeReenviar ? `<button class="boton secundario" data-accion="entrar" ${comprobando ? 'disabled' : ''}>${t.reenviar}</button>` : ''}
-      <button class="boton enlace-texto" data-accion="recuperar">${t.otroCorreo}</button>
-      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
+      <button class="boton primario" data-accion="verificar" ${comprobando ? 'disabled' : ''}>${comprobando ? t.comprobandoCodigo : t.entrarBoton}</button>
+      <p class="nota">${t.codigoNota}</p>
+      ${puedeReenviar ? `<button class="boton secundario" data-accion="pedir-codigo" ${comprobando ? 'disabled' : ''}>${t.reenviar}</button>` : ''}
+      <button class="boton enlace-texto" data-accion="entrar">${t.otroCorreo}</button>
     </div>`;
   }
   function vistaEsperando() {
@@ -2427,8 +2510,8 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <h2>${t.esperandoTitulo}</h2>
       <p class="texto">${t.esperandoTexto(esc(correoGuardado()))}</p>
       <span class="cargando" aria-hidden="true"></span>
-      <button class="boton enlace-texto" data-accion="muro">${t.otroCorreo}</button>
-      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
+      ${plan.cuenta ? '' : `<button class="boton enlace-texto" data-accion="muro">${t.otroCorreo}</button>`}
+      <button class="boton enlace-texto" data-accion="entrar">${t.esperandoOtro}</button>
     </div>`;
   }
   function vistaClave() {
@@ -2472,13 +2555,14 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     else if (accion === 'reanudar') crearGrupo(true);
     else if (accion === 'whatsapp') compartirWhatsapp();
     else if (accion === 'muro') { vista = 'muro'; mensajeClave = ''; pintarPanel(); }
-    else if (accion === 'recuperar') { vista = 'recuperar'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="correo"]'); if (c) c.focus(); }
-    else if (accion === 'entrar') pedirEnlace();
+    else if (accion === 'entrar') { vista = 'entrar'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="correo"]'); if (c) c.focus(); }
+    else if (accion === 'pedir-codigo') pedirCodigo();
+    else if (accion === 'verificar') verificarCodigo((raiz.querySelector('[data-conservar="codigo"]') || {}).value || '');
     else if (accion === 'pagar') pagar(b.dataset.plan === 'pase' ? 'pase' : 'siempre');
     else if (accion === 'clave') { vista = 'clave'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="clave"]'); if (c) c.focus(); }
     else if (accion === 'activar') activarClave((raiz.querySelector('[data-conservar="clave"]') || {}).value || '');
     else if (accion === 'cancelar') { vista = sinTiempo() && !grupo ? 'muro' : ''; pintarPanel(); }
-    else if (accion === 'soltar') soltarClave();
+    else if (accion === 'salir') salirDeCuenta();
     else if (accion === 'terminar') terminarGrupo();
     else if (accion === 'plegar') { plegado = true; pintarPanel(); }
     else if (accion === 'espejo') {
@@ -2542,7 +2626,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       espejo: espejoYo,
       amigos: [...invitados.values()].map((i) => ({ nombre: i.nombre, estado: i.estado, via: i.via, orient: i.orient, espejo: !!i.espejo, escala: ESCALAS[i.regulador.escala] / ESCALAS[techo()] })),
       pantallas: visores.size,
-      plan: { pro: plan.pro, plan: plan.plan, restantes: Math.round(restantes()), extra: plan.extra, contando, agotado },
+      plan: { pro: plan.pro, plan: plan.plan, cuenta: plan.cuenta, restantes: Math.round(restantes()), extra: plan.extra, contando, agotado },
     }),
   };
 

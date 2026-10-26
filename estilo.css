@@ -290,3 +290,57 @@ details.problema p { margin: 8px 0 0; color: var(--tinta-2); font-size: 16px; }
 @media (prefers-reduced-motion: no-preference) { .dialogo-pro[open] { animation: entra-dialogo .28s cubic-bezier(.34, 1.4, .64, 1); } }
 @keyframes entra-dialogo { from { opacity: 0; transform: translateY(10px) scale(.97); } }
 .dialogo-pro:focus, .dialogo-pro:focus-visible { outline: none; }
+
+/* ── Cuenta: «Entrar / Mi cuenta» en la cabecera y la página /cuenta/ ─────────────────────────── */
+.cabecera nav .cuenta-nav { display: inline-flex; align-items: center; gap: 6px; border-color: var(--tinta); background: var(--blanco); }
+.cuenta-nav svg { width: 19px; height: 19px; fill: none; stroke: var(--tinta); stroke-width: 2.4; stroke-linecap: round; }
+.cuenta-nav.dentro { background: var(--amarillo); }
+.cuenta-nav.pro::after { content: "PRO"; font: 400 11px/1 var(--titulo); background: var(--tinta); color: var(--amarillo); padding: 3px 5px; border-radius: 6px; }
+@media (max-width: 520px) { .cabecera nav .cuenta-nav span { display: none; } .cabecera nav .cuenta-nav { padding: 9px 10px; } }
+.cuenta { padding: 44px 0 80px; }
+.cuenta .ancho { max-width: 640px; }
+.cuenta h1 { font-size: clamp(34px, 6vw, 50px); line-height: 1; text-transform: uppercase; margin-bottom: 22px; }
+.cuenta-app { display: grid; gap: 18px; }
+.cargando-cuenta { padding: 40px 0; }
+.caja-cuenta { background: var(--blanco); border: var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 24px 22px; }
+.caja-cuenta.estrecha { max-width: 480px; }
+.caja-cuenta h2 { font-size: 23px; line-height: 1.15; margin: 0 0 10px; }
+.caja-cuenta > p { margin: 0 0 14px; color: var(--tinta-2); }
+.caja-cuenta .consejo { margin: 14px 0 0; font-size: 14.5px; color: var(--tinta-3); }
+.caja-cuenta .consejo a { color: inherit; }
+.caja-cuenta .error, .dialogo-pro .error { color: #c0392b; font-weight: 700; margin: 0; }
+.boton-enlace { appearance: none; background: none; border: 0; padding: 0; font: inherit; font-weight: 700; color: var(--tinta); text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 3px; cursor: pointer; }
+.boton-enlace:disabled { color: var(--tinta-3); text-decoration: none; cursor: default; }
+.boton.google { background: var(--blanco); gap: 12px; }
+.boton.google svg { width: 24px; height: 24px; }
+.separador { display: flex; align-items: center; gap: 12px; margin: 18px 0 !important; font-size: 14.5px; color: var(--tinta-3) !important; }
+.separador::before, .separador::after { content: ""; flex: 1; border-top: 2px solid var(--tinta); opacity: .25; }
+.campo-codigo { font: 700 30px/1 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace !important; letter-spacing: .32em; text-align: center; padding: 14px 10px !important; }
+.correo-grande { font-weight: 700; font-size: 19px; color: var(--tinta) !important; overflow-wrap: anywhere; }
+.quien { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+.avatar-cuenta { flex: none; width: 54px; height: 54px; border-radius: 50%; border: var(--borde); background: var(--azul); display: grid; place-items: center; font: 400 24px/1 var(--titulo); color: var(--blanco); }
+.correo-cuenta { margin: 0; font-weight: 700; font-size: 18px; overflow-wrap: anywhere; }
+.plan-cuenta-linea { margin: 4px 0 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; color: var(--tinta-2); font-size: 15.5px; }
+.insignia-plan { font: 400 12px/1 var(--titulo); padding: 5px 8px; border-radius: 7px; border: 2px solid var(--tinta); background: var(--papel-2); }
+.insignia-plan.pro { background: var(--tinta); color: var(--amarillo); }
+.ventajas-cuenta { list-style: none; padding: 0; margin: 0 0 16px; display: grid; gap: 6px; }
+.ventajas-cuenta li { display: flex; align-items: center; gap: 8px; font-weight: 600; }
+.ventajas-cuenta svg, .aviso-cuenta .sello-pro svg { width: 20px; height: 20px; fill: none; stroke: var(--tinta); stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.ventajas-cuenta svg { background: var(--verde); border-radius: 50%; padding: 3px; border: 2px solid var(--tinta); width: 22px; height: 22px; }
+.planes-cuenta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.planes-cuenta .boton { min-height: 58px; padding: 0 12px; font-weight: 600; }
+.planes-cuenta .boton:only-child { grid-column: 1 / -1; }
+@media (max-width: 440px) { .planes-cuenta { grid-template-columns: 1fr; } }
+.navegadores { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.navegadores li { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 2px solid var(--tinta); border-radius: var(--radio-s); background: var(--papel); }
+.nav-icono svg { width: 26px; height: 26px; fill: none; stroke: var(--tinta); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.nav-texto { flex: 1; min-width: 0; display: grid; }
+.nav-texto small { color: var(--tinta-3); font-size: 14px; }
+.salir-cuenta { box-shadow: var(--sombra-s); }
+.aviso-cuenta { display: flex; align-items: center; gap: 16px; background: var(--amarillo); border: var(--borde); border-radius: var(--radio); box-shadow: var(--sombra); padding: 18px 20px; }
+.aviso-cuenta.listo { background: var(--verde); }
+.aviso-cuenta h2 { font-size: 22px; margin: 0 0 4px; }
+.aviso-cuenta p { margin: 0; font-weight: 600; }
+.aviso-cuenta .girando { margin: 0; flex: none; }
+.aviso-cuenta .sello-pro { flex: none; width: 56px; height: 56px; margin: 0; background: var(--blanco); }
+.aviso-cuenta .sello-pro svg { width: 30px; height: 30px; }

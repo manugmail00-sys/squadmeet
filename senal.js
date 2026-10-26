@@ -1,4 +1,4 @@
-/* SquadMeet 1.5.0 */
+/* SquadMeet 1.6.0 */
 // SquadMeet — señalización compartida por el anfitrión (squad.js) y los invitados (unirse/).
 // Nuestro servidor (senal/worker.js) solo hace de cartero: reenvía OFFER/ANSWER/CANDIDATE entre ids
 // dentro de la sala del grupo, que se llama como el id del anfitrión. Habla el protocolo de PeerJS y
