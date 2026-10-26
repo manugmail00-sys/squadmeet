@@ -333,7 +333,7 @@ function iniciarSquad() {
       cuandoPc: 'Cuando entren, pulsa Iniciar en Ome.tv y el desconocido os verá a todos.',
       invitacionTitulo: 'Únete a mi grupo',
       invitacionTexto: 'Sal conmigo en Ome.tv:',
-      ruta: 'unirse',
+      ruta: 'unirse', precios: '#precios',
       tiempoHoy: 'Tiempo gratis de hoy',
       ganar30: '+30 min gratis: compártelo por WhatsApp',
       mensajeWhatsapp: 'Prueba SquadMeet: sales en Ome.tv con tus amigos, todos en la misma imagen. https://squadmeet.app',
@@ -423,7 +423,7 @@ function iniciarSquad() {
       cuandoPc: 'Once they join, press Start on Ome.tv and the stranger will see all of you.',
       invitacionTitulo: 'Join my group',
       invitacionTexto: 'Join me on Ome.tv:',
-      ruta: 'join',
+      ruta: 'join', precios: 'en/#pricing',
       tiempoHoy: 'Free time today',
       ganar30: '+30 free min: share it on WhatsApp',
       mensajeWhatsapp: 'Try SquadMeet: go on Ome.tv with your friends, all in the same picture. https://squadmeet.app',
@@ -2243,7 +2243,8 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
   }
   function vistaMuro() {
     const planes = [
-      TIENDA.siempre ? `<a class="boton oscuro plan-mini" href="${esc(TIENDA.siempre)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>` : '',
+      // Sin enlace directo de compra, a los precios de la web (allí está el botón de Payhip).
+      `<a class="boton oscuro plan-mini" href="${esc(TIENDA.siempre || SITIO + t.precios)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>`,
       TIENDA.mensual ? `<a class="boton primario plan-mini" href="${esc(TIENDA.mensual)}" target="_blank" rel="noopener"><b>${t.proMensual}</b><small>${t.proMensualSub}</small></a>` : '',
     ].join('');
     const agotadoHoy = sinTiempo();
