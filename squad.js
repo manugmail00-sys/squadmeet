@@ -1,4 +1,4 @@
-/* SquadMeet 1.4.0 · https://squadmeet.app/ */
+/* SquadMeet 1.5.0 · https://squadmeet.app/ */
 (function () {
 'use strict';
 // SquadMeet — señalización compartida por el anfitrión (squad.js) y los invitados (unirse/).
@@ -236,10 +236,10 @@ else iniciarSquad();
 function iniciarSquad() {
   // La web va fijada al construir: la de producción, o la del servidor de pruebas.
   const SITIO = 'https://squadmeet.app/';
-  const VERSION = '1.4.0';
+  const VERSION = '1.5.0';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
-  const TIENDA = { siempre: 'https://payhip.com/b/df4JA', mensual: '' };
+  const TIENDA = { siempre: 'https://payhip.com/b/df4JA', pase: 'https://payhip.com/b/p2QYe' };
   const FPS = 24;
   const FPS_VISOR = 24;
   const KBPS_VISOR = 2500;
@@ -326,18 +326,19 @@ function iniciarSquad() {
       agotadoTitulo: 'Se ha acabado tu tiempo gratis de hoy',
       agotadoTexto: 'Mañana tienes otros 10 minutos. Para seguir ahora, hazte Pro:',
       agotadoTextoExtra: 'Mañana tienes otros 10 minutos. Para seguir ahora, gana 30 minutos más o hazte Pro:',
-      proSiempre: '5 €', proSiempreSub: 'para siempre', proMensual: '1,99 €', proMensualSub: 'al mes',
+      proSiempre: '5 €', proSiempreSub: 'para siempre', proPase: '1,99 €', proPaseSub: '31 días',
       ventajasPro: ['Sin límite de tiempo', 'Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
       tengoClave: 'Tengo una clave', clavePlaceholder: 'Pega tu clave de Pro', activar: 'Activar', activando: 'Comprobando…', cancelar: 'Cancelar',
       claveAyuda: 'Te llegó por correo al comprar Pro.',
       correoEtiqueta: 'Tu correo (el mismo con el que pagarás)', correoPlaceholder: 'tucorreo@ejemplo.com',
-      pagar: (p) => (p === 'mensual' ? 'Pagar 1,99 € al mes' : 'Pagar 5 € para siempre'),
       esperandoTitulo: 'Completa el pago en Payhip',
       esperandoTexto: (c) => `Paga con <b>${c}</b>. En cuanto termines, Pro se activa solo aquí. No cierres ome.tv.`,
       otroCorreo: 'Cambiar de correo', yaPro: '¡Ya eres Pro!',
       bienvenidaTexto: 'Pago completado. Ya tienes todo esto en este navegador:', empezar: 'Empezar',
       bienvenidaNota: 'Te hemos mandado también una clave por correo: guárdala por si cambias de ordenador.',
-      proActivo: (p) => (p === 'mensual' ? 'Pro mensual activo' : 'Pro para siempre activo'),
+      proActivo: (p, hasta) => (p === 'pase' ? `Pro hasta el ${new Date(hasta).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}` : 'Pro para siempre activo'),
+      quedan: (d) => (d <= 1 ? 'Tu Pro se acaba hoy' : `Te quedan ${d} días de Pro`), renovar: 'Renovar 31 días',
+      paseNota: 'Sin suscripción: no se renueva solo.',
       quitarClave: 'Quitar de este dispositivo',
       errores: {
         invalida: 'Esa clave no existe. Cópiala tal cual del correo de la compra.',
@@ -424,18 +425,19 @@ function iniciarSquad() {
       agotadoTitulo: 'Your free time for today is up',
       agotadoTexto: 'Tomorrow you get another 10 minutes. To keep going now, go Pro:',
       agotadoTextoExtra: 'Tomorrow you get another 10 minutes. To keep going now, get 30 more minutes or go Pro:',
-      proSiempre: '€5', proSiempreSub: 'forever', proMensual: '€1.99', proMensualSub: 'a month',
+      proSiempre: '€5', proSiempreSub: 'forever', proPase: '€1.99', proPaseSub: '31 days',
       ventajasPro: ['No time limit', 'Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
       tengoClave: 'I have a key', clavePlaceholder: 'Paste your Pro key', activar: 'Activate', activando: 'Checking…', cancelar: 'Cancel',
       claveAyuda: 'It came by email when you bought Pro.',
       correoEtiqueta: 'Your email (the one you’ll pay with)', correoPlaceholder: 'you@example.com',
-      pagar: (p) => (p === 'mensual' ? 'Pay €1.99 a month' : 'Pay €5 forever'),
       esperandoTitulo: 'Finish paying on Payhip',
       esperandoTexto: (c) => `Pay with <b>${c}</b>. As soon as you’re done, Pro turns on here by itself. Don’t close ome.tv.`,
       otroCorreo: 'Use another email', yaPro: 'You’re Pro now!',
       bienvenidaTexto: 'Payment complete. You now have all this in this browser:', empezar: 'Let’s go',
       bienvenidaNota: 'We also emailed you a key: keep it in case you switch computers.',
-      proActivo: (p) => (p === 'mensual' ? 'Pro monthly active' : 'Pro forever active'),
+      proActivo: (p, hasta) => (p === 'pase' ? `Pro until ${new Date(hasta).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}` : 'Pro forever active'),
+      quedan: (d) => (d <= 1 ? 'Your Pro ends today' : `${d} days of Pro left`), renovar: 'Renew 31 days',
+      paseNota: 'No subscription: it doesn’t renew by itself.',
       quitarClave: 'Remove from this device',
       errores: {
         invalida: 'That key doesn’t exist. Copy it exactly from your purchase email.',
@@ -1560,12 +1562,13 @@ function iniciarSquad() {
   // El día cambia a medianoche, hora de España, igual que en el servidor.
   const DIA = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' });
   const hoy = () => DIA.format(new Date());
-  let plan = { pro: false, plan: null, dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false, cada: 60, error: '' };
+  let plan = { pro: false, plan: null, hasta: 0, dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false, cada: 60, error: '' };
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE_USO));
     if (g) {
       plan.pro = !!g.pro;
       plan.plan = g.plan || null;
+      plan.hasta = g.hasta || 0;
       if (g.dia === hoy()) Object.assign(plan, { restantes: g.restantes, limite: g.limite, extra: !!g.extra });
     }
   } catch {}
@@ -1595,7 +1598,7 @@ function iniciarSquad() {
   const licencia = () => { try { return localStorage.getItem(CLAVE_LICENCIA) || ''; } catch { return ''; } };
   const correoGuardado = () => { try { return localStorage.getItem(CLAVE_CORREO) || ''; } catch { return ''; } };
   function guardarPlan() {
-    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
+    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
   }
 
   async function llamarApi(ruta, extra = {}) {
@@ -1612,7 +1615,7 @@ function iniciarSquad() {
   function aplicar(d, enviados = 0) {
     const eraPro = plan.pro;
     gasto = Math.max(0, gasto - enviados);
-    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, dia: d.dia || hoy(), restantes: d.restantes, limite: d.limite, extra: !!d.extra, cada: d.cada || 60, error: d.error || '' });
+    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, hasta: d.hasta || 0, dia: d.dia || hoy(), restantes: d.restantes, limite: d.limite, extra: !!d.extra, cada: d.cada || 60, error: d.error || '' });
     if (restantes() > 60) avisadoMinuto = false;
     if (!sinTiempo()) {
       agotado = false;
@@ -1742,7 +1745,7 @@ function iniciarSquad() {
         try { localStorage.setItem(CLAVE_LICENCIA, clave); } catch {}
         vista = '';
         aplicar(d);
-        anunciar(t.proActivo(d.plan));
+        anunciar(t.proActivo(d.plan, d.hasta));
       } else mensajeClave = t.errores[d.error] || t.errores.invalida;
     } catch (e) {
       mensajeClave = t.errores[e.message] || t.errores.red;
@@ -1952,7 +1955,7 @@ a.boton.oscuro { color: var(--papel); }
 .tiempo .barra { height: 10px; border: 2px solid var(--tinta); border-radius: 99px; overflow: hidden; background: var(--papel); }
 .tiempo .barra i { display: block; height: 100%; background: var(--verde); border-right: 2px solid var(--tinta); }
 .tiempo.poco .barra i { background: var(--coral); }
-.tiempo .mas { appearance: none; border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-weight: 700; font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
+.tiempo .mas, .pase .mas { appearance: none; color: inherit; font-family: inherit; border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-weight: 700; font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Se acabó el tiempo / Pro */
 .muro { display: flex; flex-direction: column; gap: 10px; }
@@ -1962,6 +1965,9 @@ a.boton.oscuro { color: var(--papel); }
 .muro label.nota { margin-bottom: -4px; font-weight: 700; }
 .cargando { width: 26px; height: 26px; border-radius: 50%; border: 3px solid currentColor; border-right-color: transparent; animation: girar .9s linear infinite; align-self: center; opacity: .7; }
 @keyframes girar { to { transform: rotate(1turn); } }
+.pase { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.pase .nota { margin: 0; }
+.pase.acaba { background: var(--amarillo); border: 2px solid var(--tinta); border-radius: 10px; padding: 6px 8px; }
 .bienvenida { align-items: center; text-align: center; }
 .bienvenida .ventajas { align-self: stretch; text-align: left; }
 .sello { width: 64px; height: 64px; border-radius: 50%; background: var(--verde); border: 3px solid var(--tinta); box-shadow: 4px 4px 0 var(--tinta);
@@ -2291,6 +2297,13 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
   }
   function bloquePlan() {
     if (!plan.pro) return bloqueTiempo();
+    if (plan.plan === 'pase') {
+      const dias = Math.ceil((plan.hasta - Date.now()) / 86400000);
+      return `<div class="pase ${dias <= 3 ? 'acaba' : ''}">
+        <p class="nota">${dias <= 3 ? `<b>${t.quedan(dias)}</b>` : t.proActivo('pase', plan.hasta)}</p>
+        <button class="mas" data-accion="muro">${t.renovar}</button>
+      </div>`;
+    }
     return `<p class="nota">${t.proActivo(plan.plan)} · <button class="boton enlace-texto" data-accion="soltar">${t.quitarClave}</button></p>`;
   }
   function vistaMuro() {
@@ -2298,7 +2311,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     const directo = !!TIENDA.siempre;
     const planes = directo ? [
       `<button class="boton oscuro plan-mini" data-accion="pagar" data-plan="siempre"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></button>`,
-      TIENDA.mensual ? `<button class="boton primario plan-mini" data-accion="pagar" data-plan="mensual"><b>${t.proMensual}</b><small>${t.proMensualSub}</small></button>` : '',
+      TIENDA.pase ? `<button class="boton primario plan-mini" data-accion="pagar" data-plan="pase"><b>${t.proPase}</b><small>${t.proPaseSub}</small></button>` : '',
     ].join('') : `<a class="boton oscuro plan-mini" href="${esc(SITIO + t.precios)}" target="_blank" rel="noopener"><b>${t.proSiempre}</b><small>${t.proSiempreSub}</small></a>`;
     const campoCorreo = directo ? `<label class="nota" for="sm-correo">${t.correoEtiqueta}</label>
       <div class="fila-clave"><input class="campo" id="sm-correo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false"></div>
@@ -2310,6 +2323,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <ul class="ventajas">${t.ventajasPro.map((v) => `<li>${v}</li>`).join('')}</ul>
       ${campoCorreo}
       ${planes ? `<div class="planes-mini">${planes}</div>` : ''}
+      ${directo && TIENDA.pase ? `<p class="nota">${t.paseNota}</p>` : ''}
       <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
       ${agotadoHoy ? '' : `<button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>`}
     </div>`;
@@ -2374,7 +2388,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     else if (accion === 'reanudar') crearGrupo(true);
     else if (accion === 'whatsapp') compartirWhatsapp();
     else if (accion === 'muro') { vista = 'muro'; mensajeClave = ''; pintarPanel(); }
-    else if (accion === 'pagar') pagar(b.dataset.plan === 'mensual' ? 'mensual' : 'siempre');
+    else if (accion === 'pagar') pagar(b.dataset.plan === 'pase' ? 'pase' : 'siempre');
     else if (accion === 'clave') { vista = 'clave'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="clave"]'); if (c) c.focus(); }
     else if (accion === 'activar') activarClave((raiz.querySelector('[data-conservar="clave"]') || {}).value || '');
     else if (accion === 'cancelar') { vista = sinTiempo() && !grupo ? 'muro' : ''; pintarPanel(); }
