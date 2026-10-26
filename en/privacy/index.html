@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="/icono-180.png">
 <link rel="preload" href="/fuentes/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/estilo.css?v=7bb9cd0e68">
+<link rel="stylesheet" href="/estilo.css?v=ebe31d628f">
 </head>
 <body>
 <a class="salto" href="#contenido">Skip to content</a>
@@ -47,7 +47,7 @@
       <li><strong>Signaling:</strong> so the browsers can find each other, our server relays some technical messages: random identifiers for the group and each person, the connection description and the network addresses needed (IPs and ports). Friends also send the name they type (optional), their browser language and their phone’s orientation. They’re only kept in memory while the connection lasts: nothing is stored. If our server isn’t available (some carriers sometimes block its IPs), they go through the public <a href="https://peerjs.com/" rel="noopener">PeerJS</a> server, which also just relays them.</li>
       <li><strong>Relay (TURN):</strong> if your networks don’t allow a direct connection, video goes through an <a href="https://www.expressturn.com/" rel="noopener">ExpressTURN</a> server. It stays end-to-end encrypted; the server sees IPs, not content.</li>
       <li><strong>Free time:</strong> to apply each day’s free minutes, SquadMeet creates a random identifier in your browser and sends our server the minutes you use with friends connected and whether you shared SquadMeet on WhatsApp that day. We keep that identifier, the day and the minutes for 30 days. We don’t link it to your name, your email or your Ome.tv account, and we don’t know who you send the WhatsApp message to.</li>
-      <li><strong>Pro:</strong> payment happens on <a href="https://payhip.com/privacy" rel="noopener">Payhip</a>, the platform we sell Pro through. Payhip and its payment processor (Stripe or PayPal) process your payment details; Payhip gives us your email and the purchase details so we can deliver your key, handle refunds and meet tax obligations, and we keep them for as long as the law requires. When you paste your key, our server asks Payhip whether it’s valid. We keep an encrypted fingerprint of the key (not the key), whether it’s still active and the random identifiers of the devices where you use it (up to 3), while the license is active and 30 more days. That check doesn’t store your email. If you buy from the panel, the panel sends our server the email you’re going to pay with, and Payhip tells us when you pay or get a refund; that’s how we turn Pro on in that browser. We don’t store the email, only an encrypted fingerprint of it, along with what you’ve paid for (and until when, for the 31-day one) and the random identifiers of your devices (up to 3), for up to 400 days after your last payment.</li>
+      <li><strong>Pro:</strong> payment happens on <a href="https://payhip.com/privacy" rel="noopener">Payhip</a>, the platform we sell Pro through. Payhip and its payment processor (Stripe or PayPal) process your payment details; Payhip gives us your email and the purchase details so we can deliver your key, handle refunds and meet tax obligations, and we keep them for as long as the law requires. When you paste your key, our server asks Payhip whether it’s valid. We keep an encrypted fingerprint of the key (not the key), whether it’s still active and the random identifiers of the devices where you use it (up to 3), while the license is active and 30 more days. That check doesn’t store your email. If you buy from the panel, the panel sends our server the email you’re going to pay with, and Payhip tells us when you pay or get a refund; that’s how we turn Pro on in that browser. If you tap “Already Pro?”, we email you a link to turn it on (through <a href="https://resend.com/legal/privacy-policy" rel="noopener">Resend</a>). We don’t store the email, only an encrypted fingerprint of it, along with what you’ve paid for (and until when, for the 31-day one) and the random identifiers of your devices (up to 3), for up to 400 days after your last payment.</li>
       <li><strong>The website:</strong> squadmeet.app is served by GitHub Pages, which processes visitors’ IPs to deliver the pages and protect them from attacks.</li>
     </ul>
 
@@ -73,7 +73,7 @@
     <h2>Providers and transfers</h2>
     <ul>
       <li><strong>GitHub, Inc.</strong> (the website) and <strong>Cloudflare, Inc.</strong> (signaling, free-time counter and licenses, domain, email and relay credentials). The counter and licenses are stored on servers in the European Union.</li>
-      <li><strong>Payhip Ltd.</strong> (Pro sales) and its payment processor (<strong>Stripe</strong> or <strong>PayPal</strong>), <strong>Google Ireland Ltd.</strong> (Analytics, only with permission), <strong>PeerJS</strong> (backup signaling) and <strong>ExpressTURN</strong> (relay, only when needed).</li>
+      <li><strong>Payhip Ltd.</strong> (Pro sales) and its payment processor (<strong>Stripe</strong> or <strong>PayPal</strong>), <strong>Resend, Inc.</strong> (sending the “Already Pro?” link), <strong>Google Ireland Ltd.</strong> (Analytics, only with permission), <strong>PeerJS</strong> (backup signaling) and <strong>ExpressTURN</strong> (relay, only when needed).</li>
       <li>Some may process data outside the European Economic Area under the EU-US Data Privacy Framework and standard contractual clauses.</li>
       <li>The stores you install the extension from have their own policies.</li>
     </ul>
@@ -107,6 +107,6 @@
   <p id="cookies-d">We use Google Analytics to know how many people visit the site and which pages help them. It only turns on if you accept. <a href="/en/cookies/">Learn more</a>.</p>
   <div class="botones"><button class="boton pequeno" type="button" data-cookies="no">Reject</button><button class="boton primario pequeno" type="button" data-cookies="si">Accept</button></div>
 </section>
-<script src="/web.js?v=85832eae55"></script>
+<script src="/web.js?v=26992f7edb"></script>
 </body>
 </html>

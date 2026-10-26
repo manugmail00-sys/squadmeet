@@ -236,6 +236,9 @@ else iniciarSquad();
 function iniciarSquad() {
   // La web va fijada al construir: la de producción, o la del servidor de pruebas.
   const SITIO = 'https://squadmeet.app/';
+  // En la extensión hay un puente (puente.js) que comparte este navegador con squadmeet.app: lo que se
+  // pague en la web vale aquí sin hacer nada. En el favorito y el userscript no lo hay.
+  const EN_EXTENSION = '__EXTENSION__' === 'si';
   const VERSION = '1.5.0';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
@@ -334,8 +337,13 @@ function iniciarSquad() {
       esperandoTitulo: 'Completa el pago en Payhip',
       esperandoTexto: (c) => `Paga con <b>${c}</b>. En cuanto termines, Pro se activa solo aquí. No cierres ome.tv.`,
       otroCorreo: 'Cambiar de correo', yaPro: '¡Ya eres Pro!',
-      bienvenidaTexto: 'Pago completado. Ya tienes todo esto en este navegador:', empezar: 'Empezar',
-      bienvenidaNota: 'Te hemos mandado también una clave por correo: guárdala por si cambias de ordenador.',
+      bienvenidaTexto: 'Pro activado en este navegador. Ya tienes:', empezar: 'Empezar',
+      bienvenidaNota: 'Si cambias de ordenador o borras los datos del navegador, pulsa «¿Ya eres Pro?» y pon este correo.',
+      yaEresPro: '¿Ya eres Pro?', recuperarTexto: 'Escribe el correo con el que pagaste y te mandamos un enlace para activarlo aquí. Sin contraseñas.',
+      mandarEnlace: 'Mandarme el enlace', mandando: 'Enviando…',
+      revisaTitulo: 'Mira tu correo',
+      revisaTexto: (c) => `Si <b>${c}</b> tiene Pro, te acaba de llegar un enlace. Ábrelo (en el móvil o aquí) y este navegador se pone en Pro solo.`,
+      revisaNota: '¿No llega? Mira en spam y comprueba que es el correo con el que pagaste.', reenviar: 'Mandarlo otra vez',
       proActivo: (p, hasta) => (p === 'pase' ? `Pro hasta el ${new Date(hasta).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}` : 'Pro para siempre activo'),
       quedan: (d) => (d <= 1 ? 'Tu Pro se acaba hoy' : `Te quedan ${d} días de Pro`), renovar: 'Renovar 31 días',
       paseNota: 'Sin suscripción: no se renueva solo.',
@@ -343,6 +351,7 @@ function iniciarSquad() {
       errores: {
         invalida: 'Esa clave no existe. Cópiala tal cual del correo de la compra.',
         correo: 'Escribe bien tu correo.',
+        'sin-correo': 'Ahora no podemos mandar correos. Usa «Tengo una clave».', envio: 'No hemos podido mandar el correo. Prueba en un rato.',
         caducada: 'Esa clave ya no está activa (reembolsada o suscripción terminada).',
         limite: 'Esa clave ya se usa en 3 dispositivos. Quítala de uno o escríbenos.',
         tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.',
@@ -433,8 +442,13 @@ function iniciarSquad() {
       esperandoTitulo: 'Finish paying on Payhip',
       esperandoTexto: (c) => `Pay with <b>${c}</b>. As soon as you’re done, Pro turns on here by itself. Don’t close ome.tv.`,
       otroCorreo: 'Use another email', yaPro: 'You’re Pro now!',
-      bienvenidaTexto: 'Payment complete. You now have all this in this browser:', empezar: 'Let’s go',
-      bienvenidaNota: 'We also emailed you a key: keep it in case you switch computers.',
+      bienvenidaTexto: 'Pro is on in this browser. You now have:', empezar: 'Let’s go',
+      bienvenidaNota: 'If you switch computers or clear your browser data, tap “Already Pro?” and enter this email.',
+      yaEresPro: 'Already Pro?', recuperarTexto: 'Type the email you paid with and we’ll send you a link to turn it on here. No passwords.',
+      mandarEnlace: 'Send me the link', mandando: 'Sending…',
+      revisaTitulo: 'Check your email',
+      revisaTexto: (c) => `If <b>${c}</b> has Pro, a link is on its way. Open it (on your phone or here) and this browser turns Pro by itself.`,
+      revisaNota: 'Nothing? Check spam and make sure it’s the email you paid with.', reenviar: 'Send it again',
       proActivo: (p, hasta) => (p === 'pase' ? `Pro until ${new Date(hasta).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' })}` : 'Pro forever active'),
       quedan: (d) => (d <= 1 ? 'Your Pro ends today' : `${d} days of Pro left`), renovar: 'Renew 31 days',
       paseNota: 'No subscription: it doesn’t renew by itself.',
@@ -442,6 +456,7 @@ function iniciarSquad() {
       errores: {
         invalida: 'That key doesn’t exist. Copy it exactly from your purchase email.',
         correo: 'Check your email address.',
+        'sin-correo': 'We can’t send emails right now. Use “I have a key”.', envio: 'We couldn’t send the email. Try again in a while.',
         caducada: 'That key is no longer active (refunded or subscription ended).',
         limite: 'That key is already used on 3 devices. Remove it from one or write to us.',
         tienda: 'We couldn’t check it right now. Try again in a while.',
@@ -1601,7 +1616,26 @@ function iniciarSquad() {
     try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
   }
 
+  // El puente contesta con el dispositivo y el correo del almacén de la extensión (y vuelve a avisar si
+  // cambian desde otra pestaña, p. ej. al pagar en la web). Sin extensión, no se espera nada.
+  let puenteListo = Promise.resolve();
+  if (EN_EXTENSION) {
+    let avisar;
+    puenteListo = new Promise((res) => { avisar = res; setTimeout(res, 1500); });
+    window.addEventListener('message', (e) => {
+      if (e.source !== window || !e.data || e.data.tipo !== 'squadmeet:puente') return;
+      try {
+        if (/^[a-z0-9]{16,40}$/.test(e.data.dispositivo || '')) localStorage.setItem(CLAVE_DISPOSITIVO, e.data.dispositivo);
+        if (e.data.correo) localStorage.setItem(CLAVE_CORREO, e.data.correo);
+      } catch {}
+      avisar();
+      if (e.data.motivo === 'cambio') cargarPlan();
+    });
+    window.postMessage({ tipo: 'squadmeet:puente?' }, location.origin);
+  }
+  const contarCorreo = (correo) => { if (EN_EXTENSION) window.postMessage({ tipo: 'squadmeet:correo', correo }, location.origin); };
   async function llamarApi(ruta, extra = {}) {
+    await puenteListo;
     const cuerpo = { dispositivo: dispositivo(), clave: licencia(), correo: correoGuardado(), ...extra };
     if (!cuerpo.clave) delete cuerpo.clave;
     if (!cuerpo.correo) delete cuerpo.correo;
@@ -1623,10 +1657,11 @@ function iniciarSquad() {
       if (vista === 'muro') vista = '';
     }
     guardarPlan();
-    if (plan.pro && vista === 'esperando') { vista = 'bienvenida'; anunciar(t.yaPro); }
+    if (plan.pro && (vista === 'esperando' || vista === 'revisa')) { vista = 'bienvenida'; anunciar(t.yaPro); }
     if (eraPro !== plan.pro) cambioDePlan();
   }
   async function cargarPlan() {
+    await puenteListo;
     try {
       let d = await llamarApi('estado');
       // La clave vale pero este dispositivo ya no figura (se olvida tras 30 días sin usarla): se añade otra vez.
@@ -1761,14 +1796,33 @@ function iniciarSquad() {
     // Se abre ya (dentro del clic), o el navegador bloquearía la ventana.
     window.open(TIENDA[cual], '_blank', 'noopener');
     try { localStorage.setItem(CLAVE_CORREO, correo); } catch {}
+    contarCorreo(correo);
     mensajeClave = '';
     vista = 'esperando';
     esperandoDesde = Date.now();
     pintarPanel();
     llamarApi('comprar', { correo }).then(aplicar).catch(() => {});
   }
+  // «¿Ya eres Pro?»: se pide el enlace por correo y se espera a que lo abra (en cualquier dispositivo).
+  async function pedirEnlace() {
+    const correo = ((raiz.querySelector('[data-conservar="correo"]') || {}).value || correoGuardado()).trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(correo)) { mensajeClave = t.errores.correo; pintarPanel(); return; }
+    try { localStorage.setItem(CLAVE_CORREO, correo); } catch {}
+    contarCorreo(correo);
+    comprobando = true;
+    mensajeClave = '';
+    pintarPanel();
+    try {
+      aplicar(await llamarApi('entrar', { correo, idioma: /^es\b/i.test(navigator.language || '') ? 'es' : 'en' }));
+      if (!plan.pro) { vista = 'revisa'; esperandoDesde = Date.now(); }
+    } catch (e) {
+      mensajeClave = t.errores[e.message] || t.errores.red;
+    }
+    comprobando = false;
+    pintarPanel();
+  }
   setInterval(() => {
-    if (vista !== 'esperando') return;
+    if (vista !== 'esperando' && vista !== 'revisa') return;
     if (Date.now() - esperandoDesde > ESPERA) { vista = 'muro'; pintarPanel(); return; }
     cargarPlan();
   }, 5000);
@@ -1965,6 +2019,7 @@ a.boton.oscuro { color: var(--papel); }
 .muro label.nota { margin-bottom: -4px; font-weight: 700; }
 .cargando { width: 26px; height: 26px; border-radius: 50%; border: 3px solid currentColor; border-right-color: transparent; animation: girar .9s linear infinite; align-self: center; opacity: .7; }
 @keyframes girar { to { transform: rotate(1turn); } }
+.tiempo .mas.suave { font-weight: 600; color: var(--tinta-3); }
 .pase { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
 .pase .nota { margin: 0; }
 .pase.acaba { background: var(--amarillo); border: 2px solid var(--tinta); border-radius: 10px; padding: 6px 8px; }
@@ -2195,6 +2250,10 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       cuerpo = vistaClave();
     } else if (vista === 'esperando') {
       cuerpo = vistaEsperando();
+    } else if (vista === 'recuperar') {
+      cuerpo = vistaRecuperar();
+    } else if (vista === 'revisa') {
+      cuerpo = vistaRevisa();
     } else if (vista === 'bienvenida') {
       cuerpo = vistaBienvenida();
     } else if (!grupo && (vista === 'muro' || sinTiempo())) {
@@ -2293,6 +2352,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <span class="barra"><i style="width:${Math.min(100, (quedan / plan.limite) * 100)}%"></i></span>
       ${plan.extra ? '' : `<button class="mas" data-accion="whatsapp">${t.ganar30}</button>`}
       <button class="mas" data-accion="muro">${t.hazPro}</button>
+      <button class="mas suave" data-accion="recuperar">${t.yaEresPro}</button>
     </div>`;
   }
   function bloquePlan() {
@@ -2324,7 +2384,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       ${campoCorreo}
       ${planes ? `<div class="planes-mini">${planes}</div>` : ''}
       ${directo && TIENDA.pase ? `<p class="nota">${t.paseNota}</p>` : ''}
-      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
+      <button class="boton enlace-texto" data-accion="recuperar">${t.yaEresPro}</button>
       ${agotadoHoy ? '' : `<button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>`}
     </div>`;
   }
@@ -2336,6 +2396,30 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <ul class="ventajas">${t.ventajasPro.map((v) => `<li>${v}</li>`).join('')}</ul>
       <button class="boton primario" data-accion="cancelar">${t.empezar}</button>
       <p class="nota">${t.bienvenidaNota}</p>
+    </div>`;
+  }
+  function vistaRecuperar() {
+    return `<div class="muro">
+      <h2>${t.yaEresPro}</h2>
+      <p class="texto">${t.recuperarTexto}</p>
+      <div class="fila-clave"><input class="campo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" aria-label="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false"></div>
+      ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}
+      <button class="boton primario" data-accion="entrar" ${comprobando ? 'disabled' : ''}>${comprobando ? t.mandando : t.mandarEnlace}</button>
+      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
+      <button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>
+    </div>`;
+  }
+  function vistaRevisa() {
+    const puedeReenviar = Date.now() - esperandoDesde > 60000;
+    return `<div class="muro">
+      <h2>${t.revisaTitulo}</h2>
+      <p class="texto">${t.revisaTexto(esc(correoGuardado()))}</p>
+      <span class="cargando" aria-hidden="true"></span>
+      <p class="nota">${t.revisaNota}</p>
+      ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}
+      ${puedeReenviar ? `<button class="boton secundario" data-accion="entrar" ${comprobando ? 'disabled' : ''}>${t.reenviar}</button>` : ''}
+      <button class="boton enlace-texto" data-accion="recuperar">${t.otroCorreo}</button>
+      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
     </div>`;
   }
   function vistaEsperando() {
@@ -2388,6 +2472,8 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     else if (accion === 'reanudar') crearGrupo(true);
     else if (accion === 'whatsapp') compartirWhatsapp();
     else if (accion === 'muro') { vista = 'muro'; mensajeClave = ''; pintarPanel(); }
+    else if (accion === 'recuperar') { vista = 'recuperar'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="correo"]'); if (c) c.focus(); }
+    else if (accion === 'entrar') pedirEnlace();
     else if (accion === 'pagar') pagar(b.dataset.plan === 'pase' ? 'pase' : 'siempre');
     else if (accion === 'clave') { vista = 'clave'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="clave"]'); if (c) c.focus(); }
     else if (accion === 'activar') activarClave((raiz.querySelector('[data-conservar="clave"]') || {}).value || '');
