@@ -256,7 +256,7 @@ function iniciarSquad() {
   const VERSION = '1.3.0';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
-  const TIENDA = { siempre: '', mensual: '' };
+  const TIENDA = { siempre: 'https://payhip.com/b/df4JA', mensual: '' };
   const FPS = 24;
   const FPS_VISOR = 24;
   const KBPS_VISOR = 2500;
