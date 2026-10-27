@@ -344,3 +344,5 @@ details.problema p { margin: 8px 0 0; color: var(--tinta-2); font-size: 16px; }
 .aviso-cuenta .girando { margin: 0; flex: none; }
 .aviso-cuenta .sello-pro { flex: none; width: 56px; height: 56px; margin: 0; background: var(--blanco); }
 .aviso-cuenta .sello-pro svg { width: 30px; height: 30px; }
+.aviso-cuenta.duda { background: var(--papel-2); }
+.aviso-cuenta .acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }

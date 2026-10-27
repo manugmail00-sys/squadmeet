@@ -48,7 +48,9 @@
     maxNav: 'Tu cuenta vale en hasta 3 navegadores a la vez. Si entras en otro, se cierra la sesión del que lleve más tiempo sin usarse.',
     salir: 'Cerrar sesión en este navegador',
     pagadoTitulo: '¡Pago completado!', pagadoPro: 'Ya eres Pro. Si estabas en ome.tv, vuelve a esa pestaña: el panel ya es Pro.', pagadoConfirmando: 'Estamos confirmando el pago con Payhip…',
-    pagadoFuera: 'Para usar tu Pro, entra con el correo con el que has pagado.', bienvenida: (c) => `Has entrado como ${c}.`,
+    pagadoFuera: 'Si pagaste desde el panel de ome.tv, vuelve a esa pestaña: ya es Pro. Para usarlo también aquí, entra con el correo con el que has pagado.', bienvenida: (c) => `Has entrado como ${c}.`,
+    pagadoNoLlega: 'Aún no nos ha llegado el pago a esta cuenta', pagadoNoLlegaTxt: (c) => `Lo esperamos para <strong>${c}</strong>. Si en Payhip pusiste otro correo, el Pro está en ese: cierra sesión y entra con él. Si no, escríbenos a contacto@squadmeet.app y lo arreglamos.`,
+    comprobarOtraVez: 'Comprobar otra vez', entrarConOtro: 'Entrar con otro correo',
     errores: { correo: 'Escribe bien tu correo.', codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', despacio: 'Espera un poco antes de pedir otro código.', envio: 'No hemos podido mandar el correo. Prueba en un rato.', 'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', red: 'No hay conexión con SquadMeet. Prueba en un rato.', google: 'No se ha podido entrar con Google. Prueba con tu correo.', interno: 'Algo ha fallado. Prueba otra vez.' },
   } : {
     entrar: 'Sign in', miCuenta: 'My account',
@@ -81,7 +83,9 @@
     maxNav: 'Your account works in up to 3 browsers at a time. If you sign in on another, the one unused for longest is signed out.',
     salir: 'Sign out of this browser',
     pagadoTitulo: 'Payment complete!', pagadoPro: 'You’re Pro. If you were on ome.tv, go back to that tab: the panel is Pro already.', pagadoConfirmando: 'We’re confirming the payment with Payhip…',
-    pagadoFuera: 'To use your Pro, sign in with the email you paid with.', bienvenida: (c) => `You’re signed in as ${c}.`,
+    pagadoFuera: 'If you paid from the ome.tv panel, go back to that tab: it’s Pro already. To use it here too, sign in with the email you paid with.', bienvenida: (c) => `You’re signed in as ${c}.`,
+    pagadoNoLlega: 'We haven’t received the payment for this account yet', pagadoNoLlegaTxt: (c) => `We’re waiting for it for <strong>${c}</strong>. If you typed another email on Payhip, Pro is on that one: sign out and sign in with it. Otherwise, write to contacto@squadmeet.app and we’ll sort it out.`,
+    comprobarOtraVez: 'Check again', entrarConOtro: 'Sign in with another email',
     errores: { correo: 'Check your email address.', codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', despacio: 'Wait a moment before asking for another code.', envio: 'We couldn’t send the email. Try again in a while.', 'sin-correo': 'We can’t send emails right now. Try again in a while.', red: 'Can’t reach SquadMeet. Try again in a while.', google: 'Signing in with Google didn’t work. Try with your email.', interno: 'Something went wrong. Try again.' },
   };
   const VALIDO = /^[a-z0-9]{16,40}$/, ES_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -204,7 +208,7 @@
     if (correo !== correoActual()) ponerCorreo(correo);
     desde = Date.now();
     pintar('esperando');
-    api('comprar', { correo }).catch(() => {});
+    api('comprar', { correo, plan: cual }).catch(() => {});
     clearInterval(sondeo);
     sondeo = setInterval(comprobar, 4000);
   }
@@ -244,6 +248,8 @@
     const conGoogle = app.dataset.google === 'si';
     const enlaces = { siempre: app.dataset.siempre, pase: app.dataset.pase };
     let fase = 'cargando', datos = {}, pedido = '', error = '', ocupado = false, enviadoEn = 0, pagado = false, recibido = '', ticket = '';
+    // Tras volver de Payhip: hasta cuándo se espera el aviso del pago antes de explicar qué puede pasar.
+    let esperaPago = 0, sondeoPago = 0;
     const conError = (codigo) => T.errores[codigo] || T.errores.interno;
     // Vuelta de Payhip (?pagado=1) y enlaces del correo (#entrar=…) o de Google (#google=…, #error=google).
     if (/[?&]pagado=1/.test(location.search)) {
@@ -270,7 +276,11 @@
     function aviso() {
       if (!pagado) return '';
       if (fase === 'dentro' && datos.pro) return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoPro}</p></div></div>`;
-      if (fase === 'dentro') return `<div class="aviso-cuenta"><span class="girando" aria-hidden="true"></span><p>${T.pagadoConfirmando}</p></div>`;
+      if (fase === 'dentro' && Date.now() < esperaPago) return `<div class="aviso-cuenta"><span class="girando" aria-hidden="true"></span><p>${T.pagadoConfirmando}</p></div>`;
+      if (fase === 'dentro') {
+        return `<div class="aviso-cuenta duda"><div><h2>${T.pagadoNoLlega}</h2><p>${T.pagadoNoLlegaTxt(escH(correoActual()))}</p>
+          <div class="acciones"><button class="boton pequeno" type="button" data-comprobar>${T.comprobarOtraVez}</button><button class="boton pequeno" type="button" data-salir>${T.entrarConOtro}</button></div></div></div>`;
+      }
       return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoFuera}</p></div></div>`;
     }
     function vistaDentro() {
@@ -353,11 +363,19 @@
       if (!correoActual()) { fase = 'fuera'; render(); return; }
       const d = await api('cuenta');
       if (d.cuenta) { datos = d; fase = 'dentro'; } else if (fase !== 'codigo') fase = 'fuera';
+      if (pagado && fase === 'dentro' && !d.pro) esperarPago();
       render();
-      if (pagado && fase === 'dentro' && !d.pro && !sondeo) {
-        const hasta = Date.now() + 3 * 60000;
-        const t = setInterval(async () => { const e = await api('cuenta'); if (e.pro || Date.now() > hasta) { clearInterval(t); if (e.cuenta) datos = e; render(); } }, 3000);
-      }
+    }
+    // Payhip avisa del pago en unos segundos: se pregunta cada 3 s durante 2 minutos (una sola vez a la vez).
+    function esperarPago() {
+      if (sondeoPago) return;
+      if (!esperaPago || Date.now() > esperaPago) esperaPago = Date.now() + 2 * 60000;
+      sondeoPago = setInterval(async () => {
+        const e = await api('cuenta');
+        if (e.cuenta) datos = e;
+        if (e.pro || !e.cuenta || Date.now() > esperaPago) { clearInterval(sondeoPago); sondeoPago = 0; if (!e.cuenta) fase = 'fuera'; }
+        render();
+      }, 3000);
     }
     async function pedirCodigo(correo) {
       if (!ES_CORREO.test(correo)) { error = T.errores.correo; render(); return; }
@@ -402,6 +420,7 @@
       if (b.hasAttribute('data-reenviar')) pedirCodigo(pedido);
       else if (b.hasAttribute('data-otro-correo')) { fase = 'fuera'; error = ''; render(); const c = app.querySelector('#cuenta-correo'); if (c) { c.select(); c.focus(); } }
       else if (b.hasAttribute('data-confirmar')) entrarCon(recibido, { enlace: ticket });
+      else if (b.hasAttribute('data-comprobar')) { esperaPago = Date.now() + 30000; esperarPago(); render(); }
       else if (b.dataset.cerrarOtro) { b.disabled = true; await api('cerrar', { otro: b.dataset.cerrarOtro }); await cargar(); }
       else if (b.hasAttribute('data-salir')) {
         b.disabled = true;

@@ -1827,7 +1827,7 @@ function iniciarSquad() {
     vista = 'esperando';
     esperandoDesde = Date.now();
     pintarPanel();
-    llamarApi('comprar', { correo }).then(aplicar).catch(() => {});
+    llamarApi('comprar', { correo, plan: cual }).then(aplicar).catch(() => {});
   }
   // «Entrar»: se manda un código al correo; al escribirlo, este navegador entra en la cuenta (y es Pro si
   // la cuenta lo es). Con la extensión, el botón del correo o Google en squadmeet.app también valen.
