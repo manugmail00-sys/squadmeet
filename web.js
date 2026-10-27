@@ -51,7 +51,8 @@
     pagadoFuera: 'Si pagaste desde el panel de ome.tv, vuelve a esa pestaña: ya es Pro. Para usarlo también aquí, entra con el correo con el que has pagado.', bienvenida: (c) => `Has entrado como ${c}.`,
     pagadoNoLlega: 'Aún no nos ha llegado el pago a esta cuenta', pagadoNoLlegaTxt: (c) => `Lo esperamos para <strong>${c}</strong>. Si en Payhip pusiste otro correo, el Pro está en ese: cierra sesión y entra con él. Si no, escríbenos a contacto@squadmeet.app y lo arreglamos.`,
     comprobarOtraVez: 'Comprobar otra vez', entrarConOtro: 'Entrar con otro correo',
-    errores: { correo: 'Escribe bien tu correo.', codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', despacio: 'Espera un poco antes de pedir otro código.', envio: 'No hemos podido mandar el correo. Prueba en un rato.', 'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', red: 'No hay conexión con SquadMeet. Prueba en un rato.', google: 'No se ha podido entrar con Google. Prueba con tu correo.', interno: 'Algo ha fallado. Prueba otra vez.' },
+    tengoClave: '¿Tienes una clave de licencia?', claveEtiqueta: 'Clave de licencia (viene en el correo de Payhip)', activar: 'Activar en mi cuenta',
+    errores: { usada: 'Esa clave ya está en otra cuenta. Escríbenos si es tuya.', invalida: 'Esa clave no existe. Cópiala tal cual del correo de Payhip.', caducada: 'Esa clave ya no está activa.', tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.', correo: 'Escribe bien tu correo.', codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', despacio: 'Espera un poco antes de pedir otro código.', envio: 'No hemos podido mandar el correo. Prueba en un rato.', 'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', red: 'No hay conexión con SquadMeet. Prueba en un rato.', google: 'No se ha podido entrar con Google. Prueba con tu correo.', interno: 'Algo ha fallado. Prueba otra vez.' },
   } : {
     entrar: 'Sign in', miCuenta: 'My account',
     siempre: 'Pro forever · €5', pase: 'Pro 31 days · €1.99',
@@ -86,7 +87,8 @@
     pagadoFuera: 'If you paid from the ome.tv panel, go back to that tab: it’s Pro already. To use it here too, sign in with the email you paid with.', bienvenida: (c) => `You’re signed in as ${c}.`,
     pagadoNoLlega: 'We haven’t received the payment for this account yet', pagadoNoLlegaTxt: (c) => `We’re waiting for it for <strong>${c}</strong>. If you typed another email on Payhip, Pro is on that one: sign out and sign in with it. Otherwise, write to contacto@squadmeet.app and we’ll sort it out.`,
     comprobarOtraVez: 'Check again', entrarConOtro: 'Sign in with another email',
-    errores: { correo: 'Check your email address.', codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', despacio: 'Wait a moment before asking for another code.', envio: 'We couldn’t send the email. Try again in a while.', 'sin-correo': 'We can’t send emails right now. Try again in a while.', red: 'Can’t reach SquadMeet. Try again in a while.', google: 'Signing in with Google didn’t work. Try with your email.', interno: 'Something went wrong. Try again.' },
+    tengoClave: 'Have a license key?', claveEtiqueta: 'License key (it’s in the Payhip email)', activar: 'Activate on my account',
+    errores: { usada: 'That key is already on another account. Write to us if it’s yours.', invalida: 'That key doesn’t exist. Copy it exactly from the Payhip email.', caducada: 'That key is no longer active.', tienda: 'We couldn’t check it right now. Try again in a while.', correo: 'Check your email address.', codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', despacio: 'Wait a moment before asking for another code.', envio: 'We couldn’t send the email. Try again in a while.', 'sin-correo': 'We can’t send emails right now. Try again in a while.', red: 'Can’t reach SquadMeet. Try again in a while.', google: 'Signing in with Google didn’t work. Try with your email.', interno: 'Something went wrong. Try again.' },
   };
   const VALIDO = /^[a-z0-9]{16,40}$/, ES_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const leerL = (k) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
@@ -249,7 +251,7 @@
     const enlaces = { siempre: app.dataset.siempre, pase: app.dataset.pase };
     let fase = 'cargando', datos = {}, pedido = '', error = '', ocupado = false, enviadoEn = 0, pagado = false, recibido = '', ticket = '';
     // Tras volver de Payhip: hasta cuándo se espera el aviso del pago antes de explicar qué puede pasar.
-    let esperaPago = 0, sondeoPago = 0;
+    let esperaPago = 0, sondeoPago = 0, errorClave = '';
     const conError = (codigo) => T.errores[codigo] || T.errores.interno;
     // Vuelta de Payhip (?pagado=1) y enlaces del correo (#entrar=…) o de Google (#google=…, #error=google).
     if (/[?&]pagado=1/.test(location.search)) {
@@ -273,20 +275,25 @@
     };
     const boton = (plan, texto, clase) => (enlaces[plan] ? `<a class="boton ${clase} plan-cuenta" href="${escH(enlaces[plan])}" data-plan="${plan}">${texto}</a>` : '');
     const ventajas = `<ul class="ventajas-cuenta">${T.ventajas.map((v) => `<li>${CHECK}${v}</li>`).join('')}</ul>`;
+    const formClave = (abierto) => `<details class="clave-cuenta"${abierto ? ' open' : ''}><summary>${T.tengoClave}</summary>
+      <form class="formulario-pro" data-form="clave" novalidate><label for="cuenta-clave">${T.claveEtiqueta}</label>
+      <input id="cuenta-clave" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX">
+      ${errorClave ? `<p class="error" role="alert">${escH(errorClave)}</p>` : ''}
+      <button class="boton primario" type="submit" ${ocupado ? 'disabled' : ''}>${ocupado ? T.comprobando : T.activar}</button></form></details>`;
     function aviso() {
       if (!pagado) return '';
       if (fase === 'dentro' && datos.pro) return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoPro}</p></div></div>`;
       if (fase === 'dentro' && Date.now() < esperaPago) return `<div class="aviso-cuenta"><span class="girando" aria-hidden="true"></span><p>${T.pagadoConfirmando}</p></div>`;
       if (fase === 'dentro') {
         return `<div class="aviso-cuenta duda"><div><h2>${T.pagadoNoLlega}</h2><p>${T.pagadoNoLlegaTxt(escH(correoActual()))}</p>
-          <div class="acciones"><button class="boton pequeno" type="button" data-comprobar>${T.comprobarOtraVez}</button><button class="boton pequeno" type="button" data-salir>${T.entrarConOtro}</button></div></div></div>`;
+          <div class="acciones"><button class="boton pequeno" type="button" data-comprobar>${T.comprobarOtraVez}</button><button class="boton pequeno" type="button" data-salir>${T.entrarConOtro}</button></div>${formClave(true)}</div></div>`;
       }
       return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoFuera}</p></div></div>`;
     }
     function vistaDentro() {
       const correo = correoActual(), pro = !!datos.pro;
       const dias = datos.plan === 'pase' ? Math.ceil((datos.hasta - Date.now()) / 86400000) : 0;
-      const plan = !pro ? `<p>${T.gratisTxt}</p>${ventajas}<div class="planes-cuenta">${boton('siempre', T.comprarSiempre, 'oscuro')}${boton('pase', T.comprarPase, 'primario')}</div><p class="consejo">${T.sinSuscripcion}</p>`
+      const plan = !pro ? `<p>${T.gratisTxt}</p>${ventajas}<div class="planes-cuenta">${boton('siempre', T.comprarSiempre, 'oscuro')}${boton('pase', T.comprarPase, 'primario')}</div><p class="consejo">${T.sinSuscripcion}</p>${pagado ? '' : formClave(!!errorClave)}`
         : datos.plan === 'pase' ? `${ventajas}<div class="planes-cuenta">${boton('pase', T.renovar, dias <= 3 ? 'primario' : '')}${boton('siempre', T.pasarSiempre, 'oscuro')}</div><p class="consejo">${T.sinSuscripcion}</p>`
           : ventajas;
       const lista = (datos.dispositivos || []).map((n) => `<li><span class="nav-icono" aria-hidden="true">${/iPhone|Android|iPad/.test(n.nombre) ? '<svg viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>'}</span>
@@ -403,7 +410,16 @@
       e.preventDefault();
       const f = e.target.dataset.form, campo = e.target.querySelector('input');
       if (f === 'correo') pedirCodigo(campo.value.trim());
-      else if (f === 'codigo') {
+      else if (f === 'clave') {
+        const clave = campo.value.replace(/\s+/g, '');
+        if (!clave) return;
+        ocupado = true; errorClave = ''; render();
+        api('licencia', { clave }).then((d) => {
+          ocupado = false;
+          if (d.pro && d.cuenta) { datos = { ...datos, ...d }; pagado = true; esperaPago = 0; cargar(); }
+          else { errorClave = T.errores[d.error] || T.errores.invalida; render(); }
+        });
+      } else if (f === 'codigo') {
         const c = campo.value.replace(/\D/g, '');
         if (c.length !== 6) { error = conError('codigo'); render(); return; }
         entrarCon(pedido, { codigo: c });

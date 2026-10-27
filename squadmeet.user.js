@@ -375,7 +375,7 @@ function iniciarSquad() {
         invalida: 'Esa clave no existe. Cópiala tal cual del correo de la compra.',
         correo: 'Escribe bien tu correo.',
         'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', envio: 'No hemos podido mandar el correo. Prueba en un rato.',
-        codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.',
+        codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', usada: 'Esa clave ya está en otra cuenta. Escríbenos si es tuya.',
         caducada: 'Esa clave ya no está activa (reembolsada o suscripción terminada).',
         limite: 'Esa clave ya se usa en 3 dispositivos. Quítala de uno o escríbenos.',
         tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.',
@@ -484,7 +484,7 @@ function iniciarSquad() {
         invalida: 'That key doesn’t exist. Copy it exactly from your purchase email.',
         correo: 'Check your email address.',
         'sin-correo': 'We can’t send emails right now. Try again in a while.', envio: 'We couldn’t send the email. Try again in a while.',
-        codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.',
+        codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', usada: 'That key is already on another account. Write to us if it’s yours.',
         caducada: 'That key is no longer active (refunded or subscription ended).',
         limite: 'That key is already used on 3 devices. Remove it from one or write to us.',
         tienda: 'We couldn’t check it right now. Try again in a while.',
@@ -2529,6 +2529,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       <span class="cargando" aria-hidden="true"></span>
       ${plan.cuenta ? '' : `<button class="boton enlace-texto" data-accion="muro">${t.otroCorreo}</button>`}
       <button class="boton enlace-texto" data-accion="entrar">${t.esperandoOtro}</button>
+      <button class="boton enlace-texto" data-accion="clave">${t.tengoClave}</button>
     </div>`;
   }
   function vistaClave() {

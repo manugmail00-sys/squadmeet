@@ -346,3 +346,6 @@ details.problema p { margin: 8px 0 0; color: var(--tinta-2); font-size: 16px; }
 .aviso-cuenta .sello-pro svg { width: 30px; height: 30px; }
 .aviso-cuenta.duda { background: var(--papel-2); }
 .aviso-cuenta .acciones { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+.clave-cuenta { margin-top: 14px; }
+.clave-cuenta summary { cursor: pointer; font-weight: 700; font-size: 15px; text-decoration: underline; text-underline-offset: 3px; }
+.clave-cuenta form { margin-top: 10px; }
