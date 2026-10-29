@@ -1,4 +1,4 @@
-/* SquadMeet 1.6.0 · https://squadmeet.app/ */
+/* SquadMeet 1.6.1 · https://squadmeet.app/ */
 (function () {
 'use strict';
 // SquadMeet — señalización compartida por el anfitrión (squad.js) y los invitados (unirse/).
@@ -239,7 +239,7 @@ function iniciarSquad() {
   // En la extensión hay un puente (puente.js) que comparte este navegador con squadmeet.app: lo que se
   // pague en la web vale aquí sin hacer nada. En el favorito y el userscript no lo hay.
   const EN_EXTENSION = '__EXTENSION__' === 'si';
-  const VERSION = '1.6.0';
+  const VERSION = '1.6.1';
   const MAX_GRATIS = 3, MAX_PRO = 5;  // amigos por grupo: gratis y con Pro
   const API = 'https://senal.squadmeet.app/api/';
   const TIENDA = { siempre: 'https://payhip.com/b/df4JA', pase: 'https://payhip.com/b/p2QYe' };
@@ -323,17 +323,9 @@ function iniciarSquad() {
       invitacionTitulo: 'Únete a mi grupo',
       invitacionTexto: 'Sal conmigo en Ome.tv:',
       ruta: 'unirse', precios: '#precios',
-      tiempoHoy: 'Tiempo gratis de hoy',
-      ganar30: '+30 min gratis: compártelo por WhatsApp',
-      mensajeWhatsapp: 'Prueba SquadMeet: sales en Ome.tv con tus amigos, todos en la misma imagen. https://squadmeet.app',
-      hazPro: 'Sin límite con Pro',
-      ultimoMinuto: 'Queda 1 minuto gratis hoy.',
-      acabaConversacion: 'Se acabó el tiempo gratis de hoy. Terminad esta conversación: al pasar al siguiente, el grupo se pausa.',
-      agotadoTitulo: 'Se ha acabado tu tiempo gratis de hoy',
-      agotadoTexto: 'Mañana tienes otros 10 minutos. Para seguir ahora, hazte Pro:',
-      agotadoTextoExtra: 'Mañana tienes otros 10 minutos. Para seguir ahora, gana 30 minutos más o hazte Pro:',
+      hazPro: 'Hazte Pro', gratisSinLimite: 'Gratis y sin límite de tiempo',
       proSiempre: '5 €', proSiempreSub: 'para siempre', proPase: '1,99 €', proPaseSub: '31 días',
-      ventajasPro: ['Sin límite de tiempo', 'Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
+      ventajasPro: ['Hasta 5 amigos en el grupo', 'HD para tus amigos', 'Chat del grupo y votos'],
       tengoClave: 'Tengo una clave', clavePlaceholder: 'Pega tu clave de Pro', activar: 'Activar', activando: 'Comprobando…', cancelar: 'Cancelar',
       claveAyuda: 'Te llegó por correo al comprar Pro.',
       correoEtiqueta: 'Tu correo (será tu cuenta: úsalo también al pagar)', correoPlaceholder: 'tucorreo@ejemplo.com',
@@ -432,17 +424,9 @@ function iniciarSquad() {
       invitacionTitulo: 'Join my group',
       invitacionTexto: 'Join me on Ome.tv:',
       ruta: 'join', precios: 'en/#pricing',
-      tiempoHoy: 'Free time today',
-      ganar30: '+30 free min: share it on WhatsApp',
-      mensajeWhatsapp: 'Try SquadMeet: go on Ome.tv with your friends, all in the same picture. https://squadmeet.app',
-      hazPro: 'No limits with Pro',
-      ultimoMinuto: '1 free minute left today.',
-      acabaConversacion: 'Your free time for today is up. Finish this conversation: when you skip to the next one, the group pauses.',
-      agotadoTitulo: 'Your free time for today is up',
-      agotadoTexto: 'Tomorrow you get another 10 minutes. To keep going now, go Pro:',
-      agotadoTextoExtra: 'Tomorrow you get another 10 minutes. To keep going now, get 30 more minutes or go Pro:',
+      hazPro: 'Go Pro', gratisSinLimite: 'Free, with no time limit',
       proSiempre: '€5', proSiempreSub: 'forever', proPase: '€1.99', proPaseSub: '31 days',
-      ventajasPro: ['No time limit', 'Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
+      ventajasPro: ['Up to 5 friends in the group', 'HD for your friends', 'Group chat and voting'],
       tengoClave: 'I have a key', clavePlaceholder: 'Paste your Pro key', activar: 'Activate', activando: 'Checking…', cancelar: 'Cancel',
       claveAyuda: 'It came by email when you bought Pro.',
       correoEtiqueta: 'Your email (it becomes your account: pay with it too)', correoPlaceholder: 'you@example.com',
@@ -727,8 +711,6 @@ function iniciarSquad() {
     if (video && !habia && esMovil()) plegado = true;
     for (const inv of invitados.values()) enviarA(inv, { tipo: 'desconocido', presente: !!video });
     if (votos.size) { votos.clear(); avisarVotos(); }
-    // Sin tiempo gratis se deja acabar la conversación; al irse ese desconocido, el grupo se pausa.
-    if (cortarAlSiguiente && habia) return pausarPorTiempo();
     pintarPanel();
   }
 
@@ -1235,7 +1217,7 @@ function iniciarSquad() {
     mezcla = null;
   }
 
-  // motivo: 'cerrado' (lo has terminado tú) o 'agotado' (se acabó el tiempo gratis); se lo cuenta a los amigos.
+  // motivo: 'cerrado' (lo has terminado tú); se lo cuenta a los amigos.
   function terminarGrupo(motivo = 'cerrado') {
     if (!grupo) return;
     for (const inv of [...invitados.values()]) quitarInvitado(inv, motivo);
@@ -1315,8 +1297,8 @@ function iniciarSquad() {
       if (previo.estado === 'conectando') avisarFallo(previo);
       quitarInvitado(previo, null);
     }
-    if (invitados.size >= maxInvitados() || sinTiempo()) {
-      grupo.cartero.enviar('ANSWER', src, SquadSenal.paquete.sdp({ type: 'answer', sdp: p.sdp.sdp }, p.connectionId, { rechazo: sinTiempo() ? 'agotado' : 'lleno' }), via);
+    if (invitados.size >= maxInvitados()) {
+      grupo.cartero.enviar('ANSWER', src, SquadSenal.paquete.sdp({ type: 'answer', sdp: p.sdp.sdp }, p.connectionId, { rechazo: 'lleno' }), via);
       return;
     }
     const inv = {
@@ -1545,7 +1527,7 @@ function iniciarSquad() {
     const nombre = nombreDe(inv), estaba = inv.estado !== 'conectando';
     invitados.delete(inv.id);
     votos.delete(inv.id);
-    if (estaba && motivo !== 'cerrado' && motivo !== 'agotado') anunciar(motivo === 'expulsado' ? t.sacado(nombre) : t.sale(nombre));
+    if (estaba && motivo !== 'cerrado') anunciar(motivo === 'expulsado' ? t.sacado(nombre) : t.sale(nombre));
     if (motivo) enviarA(inv, { tipo: motivo });
     clearTimeout(inv.corte);
     clearTimeout(inv.plazo);
@@ -1578,18 +1560,12 @@ function iniciarSquad() {
 
   setInterval(() => { if (grupo) { vigilarDesconocido(); recuperarReal(); if (document.visibilityState === 'visible') reanudarAudio(); } }, 700);
 
-  // ── Gratis y Pro ──────────────────────────────────────────────────────────────────────────────
-  // Cada día hay 10 minutos gratis con amigos conectados, y 30 más al compartir SquadMeet por
-  // WhatsApp. Los cuenta nuestro servidor (senal/api.js) con un identificador al azar de este
-  // navegador; si no se le puede llamar (algunas operadoras bloquean Cloudflare durante el fútbol),
-  // se sigue contando aquí. Con Pro (en la cuenta, o con una clave de Payhip) no hay límite. La cuenta es
-  // el correo (sin contraseñas): se entra con un código que llega por correo, o pagando desde aquí.
+  // ── Gratis y Pro ───────────────────────────────────────────────────────
+  // Gratis no hay límite de tiempo: el servidor (senal/api.js) solo dice si este navegador está en una
+  // cuenta y si tiene Pro (más amigos, HD y chat). Con Pro (en la cuenta, o con una clave de Payhip), eso.
+  // La cuenta es el correo (sin contraseñas): se entra con un código que llega por correo, o pagando desde aquí.
   const CLAVE_DISPOSITIVO = 'squadmeet:dispositivo', CLAVE_LICENCIA = 'squadmeet:licencia', CLAVE_USO = 'squadmeet:uso', CLAVE_CORREO = 'squadmeet:correo';
-  const GRATIS = 600, EXTRA = 1800;
-  // El día cambia a medianoche, hora de España, igual que en el servidor.
-  const DIA = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit' });
-  const hoy = () => DIA.format(new Date());
-  let plan = { pro: false, plan: null, hasta: 0, cuenta: false, dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false, cada: 60, error: '' };
+  let plan = { pro: false, plan: null, hasta: 0, cuenta: false, error: '' };
   try {
     const g = JSON.parse(localStorage.getItem(CLAVE_USO));
     if (g) {
@@ -1597,13 +1573,9 @@ function iniciarSquad() {
       plan.plan = g.plan || null;
       plan.hasta = g.hasta || 0;
       plan.cuenta = !!g.cuenta;
-      if (g.dia === hoy()) Object.assign(plan, { restantes: g.restantes, limite: g.limite, extra: !!g.extra });
     }
   } catch {}
-  let gasto = 0;                // segundos contados aquí que el servidor aún no sabe
-  let contando = false, ultimoLatido = 0, latiendo = false, avisadoMinuto = false;
-  let agotado = false, cortarAlSiguiente = false;
-  // '' normal, 'muro' (hazte Pro, o sin tiempo), 'esperando' (pagando), 'entrar' (correo), 'codigo' (el del
+  // '' normal, 'muro' (hazte Pro), 'esperando' (pagando), 'entrar' (correo), 'codigo' (el del
   // correo), 'clave' (escribiendo la clave) o 'bienvenida' (recién hecho Pro)
   let vista = '';
   let correoPedido = '', pedidoEn = 0;  // a qué correo se mandó el código para entrar, y cuándo
@@ -1613,9 +1585,6 @@ function iniciarSquad() {
   const chat = [];              // últimos mensajes del chat del grupo (Pro)
   const votos = new Set();      // amigos que quieren pasar al siguiente (Pro)
   const maxInvitados = () => (plan.pro ? MAX_PRO : MAX_GRATIS);
-  const restantes = () => (plan.pro ? Infinity : Math.max(0, plan.restantes - gasto));
-  const sinTiempo = () => !plan.pro && restantes() <= 0;
-  const mmss = (s) => `${Math.floor(s / 60)}:${String(Math.floor(s % 60)).padStart(2, '0')}`;
 
   function dispositivo() {
     let d = '';
@@ -1629,7 +1598,7 @@ function iniciarSquad() {
   const licencia = () => { try { return localStorage.getItem(CLAVE_LICENCIA) || ''; } catch { return ''; } };
   const correoGuardado = () => { try { return localStorage.getItem(CLAVE_CORREO) || ''; } catch { return ''; } };
   function guardarPlan() {
-    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, cuenta: plan.cuenta, dia: plan.dia, restantes: plan.restantes - gasto, limite: plan.limite, extra: plan.extra })); } catch {}
+    try { localStorage.setItem(CLAVE_USO, JSON.stringify({ pro: plan.pro, plan: plan.plan, hasta: plan.hasta, cuenta: plan.cuenta })); } catch {}
   }
 
   // El puente contesta con el dispositivo y el correo del almacén de la extensión (y vuelve a avisar si
@@ -1666,20 +1635,12 @@ function iniciarSquad() {
     // text/plain para que el navegador no tenga que preguntar antes (CORS sin petición previa).
     const r = await fetch(API + ruta, { method: 'POST', body: JSON.stringify(cuerpo), credentials: 'omit', headers: { 'content-type': 'text/plain' } });
     const d = await r.json().catch(() => ({}));
-    if (typeof d.restantes !== 'number') throw new Error(d.error || 'red');
+    if (typeof d.pro !== 'boolean') throw new Error(d.error || 'red');
     return d;
   }
-  // enviados: los segundos de este latido, que el servidor ya ha sumado.
-  function aplicar(d, enviados = 0) {
+  function aplicar(d) {
     const eraPro = plan.pro;
-    gasto = Math.max(0, gasto - enviados);
-    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, hasta: d.hasta || 0, cuenta: !!d.cuenta, dia: d.dia || hoy(), restantes: d.restantes, limite: d.limite, extra: !!d.extra, cada: d.cada || 60, error: d.error || '' });
-    if (restantes() > 60) avisadoMinuto = false;
-    if (!sinTiempo()) {
-      agotado = false;
-      cortarAlSiguiente = false;
-      if (vista === 'muro') vista = '';
-    }
+    Object.assign(plan, { pro: !!d.pro, plan: d.plan || null, hasta: d.hasta || 0, cuenta: !!d.cuenta, error: d.error || '' });
     guardarPlan();
     if (plan.pro && vista === 'esperando') { vista = 'bienvenida'; anunciar(t.yaPro); }
     // Ha entrado en la cuenta (con el código, o en squadmeet.app con la extensión).
@@ -1697,66 +1658,6 @@ function iniciarSquad() {
     } catch {}
     pintarPanel();
   }
-  async function latido() {
-    if (latiendo) return;
-    latiendo = true;
-    ultimoLatido = Date.now();
-    const enviados = gasto;
-    try { aplicar(await llamarApi('latido', { segundos: Math.round(enviados) }), enviados); } catch { guardarPlan(); }
-    latiendo = false;
-  }
-
-  // Cada segundo: se cuenta solo con algún amigo conectado. Al quedar un minuto se avisa a todos, y al
-  // llegar a cero se deja acabar la conversación con el desconocido de ahora.
-  let ultimoTic = Date.now();
-  setInterval(() => {
-    const ahora = Date.now(), dt = Math.min(5, (ahora - ultimoTic) / 1000);
-    ultimoTic = ahora;
-    if (plan.dia !== hoy()) {
-      Object.assign(plan, { dia: hoy(), restantes: GRATIS, limite: GRATIS, extra: false });
-      gasto = 0;
-      agotado = cortarAlSiguiente = false;
-      if (vista === 'muro') vista = '';
-      cargarPlan();
-    }
-    const conectados = [...invitados.values()].filter((i) => i.estado === 'conectado').length;
-    const debe = !!grupo && !plan.pro && conectados > 0;
-    if (debe) gasto += dt;
-    if (debe !== contando) {
-      contando = debe;
-      if (debe) ultimoLatido = ahora;
-      else if (gasto > 0) latido();
-    }
-    if (contando && ahora - ultimoLatido >= plan.cada * 1000) latido();
-    if (grupo && !plan.pro) {
-      const quedan = restantes();
-      if (contando && quedan > 0 && quedan <= 60 && !avisadoMinuto) {
-        avisadoMinuto = true;
-        aviso = t.ultimoMinuto;
-        for (const inv of invitados.values()) enviarA(inv, { tipo: 'aviso', que: 'minuto' });
-        pintarPanel();
-      }
-      if (quedan <= 0 && !agotado) {
-        agotado = true;
-        latido();
-        if (desconocido.video) {
-          cortarAlSiguiente = true;
-          aviso = t.acabaConversacion;
-          pintarPanel();
-        } else pausarPorTiempo();
-      }
-    }
-    actualizarReloj();
-  }, 1000);
-
-  function pausarPorTiempo() {
-    cortarAlSiguiente = false;
-    if (grupo) terminarGrupo('agotado');
-    vista = 'muro';
-    plegado = false;
-    pintarPanel();
-  }
-
   // Con Pro o sin él cambian el máximo de amigos, el HD y el chat: se les avisa y se ajusta el envío.
   function cambioDePlan() {
     for (const inv of invitados.values()) {
@@ -1764,32 +1665,6 @@ function iniciarSquad() {
       inv.regulador.escala = Math.max(inv.regulador.escala, techo());
       const sender = inv.enlace.pc.getSenders().find((x) => x.track && x.track.kind === 'video');
       if (sender && inv.estado === 'conectado') limitarVisor(sender, inv.regulador.escala);
-    }
-    pintarPanel();
-  }
-
-  // El reloj se actualiza sin repintar el panel (que quitaría el foco a lo que estés escribiendo).
-  function actualizarReloj() {
-    if (!raiz) return;
-    const caja = raiz.querySelector('.tiempo');
-    if (caja) {
-      const quedan = restantes();
-      caja.querySelector('.reloj').textContent = mmss(quedan);
-      caja.querySelector('.barra i').style.width = `${Math.min(100, (quedan / plan.limite) * 100)}%`;
-      caja.classList.toggle('poco', quedan <= 60);
-    }
-    const pastilla = raiz.querySelector('.pastilla span');
-    if (pastilla && contando && !anuncio) pastilla.textContent = mmss(restantes());
-  }
-
-  async function compartirWhatsapp() {
-    window.open(`https://wa.me/?text=${encodeURIComponent(t.mensajeWhatsapp)}`, '_blank', 'noopener');
-    try { aplicar(await llamarApi('compartir')); } catch {
-      if (!plan.extra) {
-        Object.assign(plan, { extra: true, restantes: plan.restantes + EXTRA, limite: plan.limite + EXTRA });
-        guardarPlan();
-        aplicar({ ...plan });
-      }
     }
     pintarPanel();
   }
@@ -1928,7 +1803,6 @@ function iniciarSquad() {
   const ICONOS = {
     google: '<svg viewBox="0 0 48 48" aria-hidden="true" class="color"><path fill="#ffc107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#ff3d00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4caf50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976d2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>',
     marca: '<svg viewBox="0 0 32 32" aria-hidden="true"><rect width="32" height="32" rx="9" fill="#141210"/><rect x="6.5" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ffd43b"/><rect x="17" y="6.5" width="8.5" height="8.5" rx="2.4" fill="#ff6b57"/><rect x="6.5" y="17" width="8.5" height="8.5" rx="2.4" fill="#5b8cff"/><rect x="17" y="17" width="8.5" height="8.5" rx="2.4" fill="#2fd38a"/></svg>',
-    whatsapp: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4.5 19.5 5.6 16A8 8 0 1 1 8.4 18.6z"/><path d="M9.2 9.3c.3 2.4 2.6 4.8 5.3 5.3l1-1.3-1.8-1-.9.7c-.9-.4-1.8-1.3-2.2-2.2l.7-.9-1-1.8z"/></svg>',
     enviar: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 4 3.5 11l6.5 2.5L12.5 20z"/><path d="m10 13.5 4-4"/></svg>',
     menos: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 12h12" /></svg>',
     copiar: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg>',
@@ -1998,7 +1872,6 @@ a.boton { text-decoration: none; color: var(--tinta); }
 .primario { background: var(--amarillo); }
 .oscuro { background: var(--tinta); color: var(--papel); box-shadow: 3px 3px 0 var(--coral); }
 a.boton.oscuro { color: var(--papel); }
-.whatsapp { background: var(--verde); }
 .secundario { background: var(--blanco); }
 .peligro { background: var(--blanco); box-shadow: none; border-width: 2px; height: 40px; }
 .peligro:hover:not(:disabled) { background: var(--coral); box-shadow: none; transform: none; }
@@ -2059,10 +1932,6 @@ a.boton.oscuro { color: var(--papel); }
 /* Tiempo gratis */
 .tiempo { display: flex; flex-direction: column; gap: 7px; padding: 10px 11px; border: 2px solid var(--tinta); border-radius: 11px; background: var(--blanco); }
 .tiempo .fila { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-weight: 800; font-size: 13.5px; }
-.tiempo .reloj { font-variant-numeric: tabular-nums; font-size: 15px; }
-.tiempo .barra { height: 10px; border: 2px solid var(--tinta); border-radius: 99px; overflow: hidden; background: var(--papel); }
-.tiempo .barra i { display: block; height: 100%; background: var(--verde); border-right: 2px solid var(--tinta); }
-.tiempo.poco .barra i { background: var(--coral); }
 .tiempo .mas, .pase .mas { appearance: none; color: inherit; font-family: inherit; border: 0; background: none; padding: 0; text-align: left; cursor: pointer; font-weight: 700; font-size: 12.5px; text-decoration: underline; text-underline-offset: 3px; }
 
 /* Se acabó el tiempo / Pro */
@@ -2304,7 +2173,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     const n = grupo ? 1 + conectados : 0;
     if (plegado) {
       ultimoHtml = '';
-      raiz.innerHTML = `<button class="pastilla ${anuncio ? 'con-anuncio' : ''}" data-accion="desplegar" aria-label="${t.abrir}">${ICONOS.marca}<span>${anuncio ? esc(anuncio) : contando ? mmss(restantes()) : grupo ? `${n}/${1 + maxInvitados()}` : 'Squad'}</span></button>`;
+      raiz.innerHTML = `<button class="pastilla ${anuncio ? 'con-anuncio' : ''}" data-accion="desplegar" aria-label="${t.abrir}">${ICONOS.marca}<span>${anuncio ? esc(anuncio) : grupo ? `${n}/${1 + maxInvitados()}` : 'Squad'}</span></button>`;
       colocar();
       return;
     }
@@ -2330,7 +2199,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       cuerpo = vistaCodigo();
     } else if (vista === 'bienvenida') {
       cuerpo = vistaBienvenida();
-    } else if (!grupo && (vista === 'muro' || sinTiempo())) {
+    } else if (vista === 'muro') {
       cuerpo = vistaMuro();
     } else if (!grupo) {
       const guardado = leerGuardado();
@@ -2378,7 +2247,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
           <div class="etiqueta">${t.enGrupo}</div>
           <ul class="personas">${filas.join('')}</ul>
         </div>
-        ${plan.pro ? bloqueChat(conectados) : bloqueTiempo()}
+        ${plan.pro ? bloqueChat(conectados) : bloqueGratis()}
         ${invitados.size && volumenFunciona ? `<label class="volumen">${ICONOS.volumen}<input class="vol" type="range" min="0" max="1" step="0.05" value="${volumenAmigos}" aria-label="${esc(t.volumen)}"></label>` : ''}
         ${aviso ? `<p class="aviso">${esc(aviso)}</p>` : ''}
         <p class="nota">${notaGrupo(conectados)}</p>
@@ -2417,14 +2286,11 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     colocar();
   }
 
-  // Tiempo gratis de hoy (con un grupo abierto, o antes de crearlo).
-  function bloqueTiempo() {
+  // Lo que se ve sin Pro (con un grupo abierto, o antes de crearlo): gratis sin límite, y cómo hacerse Pro.
+  function bloqueGratis() {
     if (plan.pro) return '';
-    const quedan = restantes();
-    return `<div class="tiempo ${quedan <= 60 ? 'poco' : ''}">
-      <div class="fila"><span>${t.tiempoHoy}</span><span class="reloj">${mmss(quedan)}</span></div>
-      <span class="barra"><i style="width:${Math.min(100, (quedan / plan.limite) * 100)}%"></i></span>
-      ${plan.extra ? '' : `<button class="mas" data-accion="whatsapp">${t.ganar30}</button>`}
+    return `<div class="tiempo">
+      <div class="fila"><span>${t.gratisSinLimite}</span></div>
       <button class="mas" data-accion="muro">${t.hazPro}</button>
       ${plan.cuenta ? '' : `<button class="mas suave" data-accion="entrar">${t.entrar}</button>`}
     </div>`;
@@ -2435,7 +2301,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     return `<p class="nota linea-cuenta"><span class="correo">${esc(correoGuardado())}</span> · <a class="enlace-texto" href="${esc(SITIO + t.cuentaRuta)}" target="_blank" rel="noopener">${t.miCuenta}</a> · <button class="boton enlace-texto" data-accion="salir">${t.salir}</button></p>`;
   }
   function bloquePlan() {
-    if (!plan.pro) return bloqueTiempo() + lineaCuenta();
+    if (!plan.pro) return bloqueGratis() + lineaCuenta();
     if (plan.plan === 'pase') {
       const dias = Math.ceil((plan.hasta - Date.now()) / 86400000);
       return `<div class="pase ${dias <= 3 ? 'acaba' : ''}">
@@ -2458,16 +2324,14 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     const campoCorreo = !directo ? '' : plan.cuenta && correoGuardado() ? `<p class="nota">${t.pagarasCon(esc(correoGuardado()))}</p>${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}` : `<label class="nota" for="sm-correo">${t.correoEtiqueta}</label>
       <div class="fila-clave"><input class="campo" id="sm-correo" data-conservar="correo" type="email" inputmode="email" value="${esc(correoGuardado())}" placeholder="${esc(t.correoPlaceholder)}" autocomplete="email" spellcheck="false"></div>
       ${mensajeClave ? `<p class="error">${esc(mensajeClave)}</p>` : ''}`;
-    const agotadoHoy = sinTiempo();
     return `<div class="muro">
-      ${agotadoHoy ? `<h2>${t.agotadoTitulo}</h2><p class="texto">${plan.extra ? t.agotadoTexto : t.agotadoTextoExtra}</p>` : `<h2>${t.hazPro}</h2>`}
-      ${plan.extra ? '' : `<button class="boton whatsapp" data-accion="whatsapp">${ICONOS.whatsapp}${t.ganar30}</button>`}
+      <h2>${t.hazPro}</h2>
       <ul class="ventajas">${t.ventajasPro.map((v) => `<li>${v}</li>`).join('')}</ul>
       ${campoCorreo}
       ${planes ? `<div class="planes-mini">${planes}</div>` : ''}
       ${directo && TIENDA.pase ? `<p class="nota">${t.paseNota}</p>` : ''}
       ${plan.cuenta ? '' : `<button class="boton enlace-texto" data-accion="entrar">${t.yaTienesCuenta}</button>`}
-      ${agotadoHoy ? '' : `<button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>`}
+      <button class="boton enlace-texto" data-accion="cancelar">${t.cancelar}</button>
     </div>`;
   }
   function vistaBienvenida() {
@@ -2551,10 +2415,8 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       if (confirmar !== clave) return pedirConfirmacion(clave);
       confirmar = null;
     }
-    if ((accion === 'crear' || accion === 'reanudar') && sinTiempo()) { vista = 'muro'; pintarPanel(); return; }
     if (accion === 'crear') crearGrupo(false);
     else if (accion === 'reanudar') crearGrupo(true);
-    else if (accion === 'whatsapp') compartirWhatsapp();
     else if (accion === 'muro') { vista = 'muro'; mensajeClave = ''; pintarPanel(); }
     else if (accion === 'entrar') { vista = 'entrar'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="correo"]'); if (c) c.focus(); }
     else if (accion === 'pedir-codigo') pedirCodigo();
@@ -2562,7 +2424,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
     else if (accion === 'pagar') pagar(b.dataset.plan === 'pase' ? 'pase' : 'siempre');
     else if (accion === 'clave') { vista = 'clave'; mensajeClave = ''; pintarPanel(); const c = raiz.querySelector('[data-conservar="clave"]'); if (c) c.focus(); }
     else if (accion === 'activar') activarClave((raiz.querySelector('[data-conservar="clave"]') || {}).value || '');
-    else if (accion === 'cancelar') { vista = sinTiempo() && !grupo ? 'muro' : ''; pintarPanel(); }
+    else if (accion === 'cancelar') { vista = ''; pintarPanel(); }
     else if (accion === 'salir') salirDeCuenta();
     else if (accion === 'terminar') terminarGrupo();
     else if (accion === 'plegar') { plegado = true; pintarPanel(); }
@@ -2627,7 +2489,7 @@ button:focus-visible, .campo:focus-visible, .vol:focus-visible, a:focus-visible 
       espejo: espejoYo,
       amigos: [...invitados.values()].map((i) => ({ nombre: i.nombre, estado: i.estado, via: i.via, orient: i.orient, espejo: !!i.espejo, escala: ESCALAS[i.regulador.escala] / ESCALAS[techo()] })),
       pantallas: visores.size,
-      plan: { pro: plan.pro, plan: plan.plan, cuenta: plan.cuenta, restantes: Math.round(restantes()), extra: plan.extra, contando, agotado },
+      plan: { pro: plan.pro, plan: plan.plan, cuenta: plan.cuenta },
     }),
   };
 
