@@ -16,7 +16,7 @@
 <link rel="apple-touch-icon" href="/icono-180.png">
 <link rel="preload" href="/fuentes/archivo-black.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/fuentes/space-grotesk.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/estilo.css?v=ea98040cda">
+<link rel="stylesheet" href="/estilo.css?v=98e294a8a7">
 </head>
 <body>
 <a class="salto" href="#contenido">Ir al contenido</a>
@@ -47,7 +47,7 @@
       <li><strong>Señalización:</strong> para que los navegadores se encuentren, nuestro servidor reenvía unos mensajes técnicos: identificadores al azar del grupo y de cada persona, la descripción de la conexión y las direcciones de red necesarias (IP y puertos). Los amigos envían también el nombre que escriban (opcional), el idioma de su navegador y la orientación del móvil. Solo están en memoria mientras dura la conexión: no se guardan. Si nuestro servidor no está disponible (algunas operadoras bloquean a veces sus IP), pasan por el servidor público de <a href="https://peerjs.com/" rel="noopener">PeerJS</a>, que también se limita a reenviarlos.</li>
       <li><strong>Retransmisión (TURN):</strong> si vuestras redes no permiten la conexión directa, el vídeo pasa por un servidor de <a href="https://www.expressturn.com/" rel="noopener">ExpressTURN</a>. Sigue cifrado de extremo a extremo; el servidor ve las IP, no el contenido.</li>
       <li><strong>Uso gratis:</strong> no contamos ni guardamos tu tiempo de uso. SquadMeet crea en tu navegador un identificador al azar, pero solo se guarda en nuestro servidor si entras en una cuenta (ver «Pro» más abajo).</li>
-      <li><strong>Pro:</strong> el pago se hace en <a href="https://payhip.com/privacy" rel="noopener">Payhip</a>, la plataforma con la que vendemos Pro. Payhip y su procesador de pagos (Stripe o PayPal) tratan tus datos de pago; Payhip nos da tu correo y los datos de la compra para entregarte la clave, atender devoluciones y cumplir con las obligaciones fiscales, y los conservamos el tiempo que exige la ley. Cuando pegas tu clave, nuestro servidor pregunta a Payhip si es válida. Guardamos una huella cifrada de la clave (no la clave), si sigue activa y los identificadores al azar de los dispositivos donde la usas (hasta 3), mientras la licencia esté activa y 30 días más. Esa comprobación no guarda tu correo. El correo con el que pagas es también tu <strong>cuenta de SquadMeet</strong>, que no tiene contraseña: entras demostrando que lo lees (te mandamos un código de 6 cifras a través de <a href="https://resend.com/legal/privacy-policy" rel="noopener">Resend</a>) o pagando desde ese navegador. Para eso, el panel o la web envían a nuestro servidor el correo y Payhip nos avisa cuando pagas o hay un reembolso. No guardamos el correo, solo una huella cifrada suya, junto a lo que has pagado (y hasta cuándo, si es el de 31 días), los identificadores al azar de los navegadores donde has entrado (hasta 3), el tipo de navegador y sistema de cada uno (por ejemplo «Chrome · Windows», para que los reconozcas en «Mi cuenta») y cuándo se usaron por última vez. Los códigos para entrar se guardan cifrados y caducan a los 30 minutos. Una cuenta con pagos se conserva hasta 400 días después del último pago; sin pagos, se borra a los 30 días sin usarla. Puedes cerrar la sesión en «Mi cuenta» o pedirnos que la borremos.</li>
+      <li><strong>Pro:</strong> el pago se hace en <a href="https://whop.com/privacy-policy/" rel="noopener">Whop</a>, la plataforma con la que vendemos Pro. Whop y sus procesadores de pago tratan tus datos de pago; Whop nos da tu correo y los datos de la compra para atender devoluciones y cumplir con las obligaciones fiscales, y los conservamos el tiempo que exige la ley. Whop avisa a nuestro servidor cuando pagas, cancelas o hay un reembolso, y nuestro servidor lee de Whop el estado de esa compra o suscripción (activa, cancelada, hasta cuándo). Tu <strong>cuenta de SquadMeet</strong> es tu correo y no tiene contraseña: entras demostrando que lo lees (te mandamos un código de 6 cifras a través de <a href="https://resend.com/legal/privacy-policy" rel="noopener">Resend</a>). Al comprar, nuestro servidor crea el pago en Whop y le pega la huella cifrada de tu cuenta (no tu correo), así Pro llega a tu cuenta aunque pagues en Whop con otro correo. No guardamos el correo, solo una huella cifrada suya, junto a lo que has pagado (y, si es la mensual, hasta cuándo y si se renueva), una dirección de Whop para gestionar la suscripción, los identificadores al azar de los navegadores donde has entrado (hasta 3), el tipo de navegador y sistema de cada uno (por ejemplo «Chrome · Windows», para que los reconozcas en «Mi cuenta») y cuándo se usaron por última vez. Los códigos para entrar se guardan cifrados y caducan a los 30 minutos. Una cuenta con pagos se conserva hasta 400 días después del último pago; sin pagos, se borra a los 30 días sin usarla. Puedes cerrar la sesión en «Mi cuenta» o pedirnos que la borremos.</li>
       <li><strong>La web:</strong> squadmeet.app se sirve desde GitHub Pages, que trata las IP de quien la visita para entregar las páginas y protegerlas de ataques.</li>
     </ul>
 
@@ -56,7 +56,7 @@
 
     <h2>Qué se guarda en tu dispositivo</h2>
     <ul>
-      <li>En ome.tv: la posición del panel, si inviertes tu imagen, un identificador al azar de este navegador, tu clave Pro si la pegas y, mientras la pestaña está abierta, el grupo para poder reanudarlo si recargas.</li>
+      <li>En ome.tv: la posición del panel, si inviertes tu imagen, un identificador al azar de este navegador, tu correo si has entrado en tu cuenta y, mientras la pestaña está abierta, el grupo para poder reanudarlo si recargas.</li>
       <li>En la página de invitación: el nombre que escribas, para no tener que escribirlo otra vez.</li>
       <li>En esta web: por dónde vas en la guía del móvil y tu elección sobre las cookies.</li>
     </ul>
@@ -72,14 +72,14 @@
 
     <h2>Proveedores y transferencias</h2>
     <ul>
-      <li><strong>GitHub, Inc.</strong> (la web) y <strong>Cloudflare, Inc.</strong> (señalización, contador de tiempo y licencias, dominio, correo y credenciales de retransmisión). El contador y las licencias se guardan en servidores de la Unión Europea.</li>
-      <li><strong>Payhip Ltd.</strong> (venta de Pro) y su procesador de pagos (<strong>Stripe</strong> o <strong>PayPal</strong>), <strong>Resend, Inc.</strong> (envío del enlace de «¿Ya eres Pro?»), <strong>Google Ireland Ltd.</strong> (Analytics, solo con permiso), <strong>PeerJS</strong> (señalización de reserva) y <strong>ExpressTURN</strong> (retransmisión, solo cuando hace falta).</li>
+      <li><strong>GitHub, Inc.</strong> (la web) y <strong>Cloudflare, Inc.</strong> (señalización, cuentas, dominio, correo y credenciales de retransmisión). Las cuentas se guardan en servidores de la Unión Europea.</li>
+      <li><strong>Whop</strong> (venta de Pro) y sus procesadores de pago, <strong>Resend, Inc.</strong> (envío del código para entrar), <strong>Google Ireland Ltd.</strong> (Analytics, solo con permiso), <strong>PeerJS</strong> (señalización de reserva) y <strong>ExpressTURN</strong> (retransmisión, solo cuando hace falta).</li>
       <li>Algunos pueden tratar datos fuera del Espacio Económico Europeo con las garantías del Marco de Privacidad de Datos UE-EE. UU. y cláusulas contractuales tipo.</li>
       <li>Las tiendas desde las que instales la extensión tienen sus propias políticas.</li>
     </ul>
 
     <h2>Tus derechos</h2>
-    <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación o portabilidad escribiendo a <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>. Como no sabemos quién eres, para encontrar tus datos necesitaremos tu clave Pro o el identificador al azar (está en el panel de SquadMeet). Si crees que no hemos atendido bien tu petición, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es/" rel="noopener">aepd.es</a>).</p>
+    <p>Puedes pedir acceso, rectificación, supresión, oposición, limitación o portabilidad escribiendo a <a href="mailto:contacto@squadmeet.app">contacto@squadmeet.app</a>. Como no sabemos quién eres, para encontrar tus datos necesitaremos el correo de tu cuenta. Si crees que no hemos atendido bien tu petición, puedes reclamar ante la Agencia Española de Protección de Datos (<a href="https://www.aepd.es/" rel="noopener">aepd.es</a>).</p>
 
     <h2>Menores</h2>
     <p>SquadMeet es solo para mayores de 18 años, la misma edad que exige Ome.tv.</p>
@@ -107,6 +107,6 @@
   <p id="cookies-d">Usamos Google Analytics para saber cuántas personas visitan la web y qué páginas les sirven. Solo se activa si aceptas. <a href="/cookies/">Más información</a>.</p>
   <div class="botones"><button class="boton pequeno" type="button" data-cookies="no">Rechazar</button><button class="boton primario pequeno" type="button" data-cookies="si">Aceptar</button></div>
 </section>
-<script src="/web.js?v=d17b0cf95b"></script>
+<script src="/web.js?v=861cbbd6f4"></script>
 </body>
 </html>

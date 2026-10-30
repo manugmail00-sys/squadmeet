@@ -46,8 +46,8 @@ code { font: 600 .92em ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 .cabecera nav a:hover { border-color: var(--tinta); background: var(--blanco); }
 .cabecera nav .idioma { border-color: var(--tinta); background: var(--blanco); }
 .cabecera .boton { min-height: 44px; padding: 0 16px; font-size: 15.5px; box-shadow: var(--sombra-s); }
-@media (max-width: 760px) { .cabecera nav .seccion { display: none; } }
-@media (max-width: 400px) { .cabecera .boton { display: none; } }
+@media (max-width: 900px) { .cabecera nav .seccion { display: none; } }
+@media (max-width: 440px) { .cabecera .boton { display: none; } }
 
 /* ── Botones ───────────────────────────────────────────────────────────────────────────────── */
 .boton { appearance: none; display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 54px; padding: 0 24px; font: 700 17px/1.15 var(--texto); color: var(--tinta); background: var(--blanco); border: var(--borde); border-radius: var(--radio-s); box-shadow: var(--sombra); cursor: pointer; text-decoration: none; text-align: center; transition: transform var(--rapido), box-shadow var(--rapido), background-color var(--rapido); -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
@@ -297,6 +297,8 @@ details.problema p { margin: 8px 0 0; color: var(--tinta-2); font-size: 16px; }
 .cuenta-nav.dentro { background: var(--amarillo); }
 .cuenta-nav.pro::after { content: "PRO"; font: 400 11px/1 var(--titulo); background: var(--tinta); color: var(--amarillo); padding: 3px 5px; border-radius: 6px; }
 @media (max-width: 520px) { .cabecera nav .cuenta-nav span { display: none; } .cabecera nav .cuenta-nav { padding: 9px 10px; } }
+/* Pantallas de 320–360 px: con «PRO» al lado de la cuenta, la cabecera no cabía. */
+@media (max-width: 360px) { .cabecera .ancho { gap: 8px; } .marca { font-size: 19px; gap: 8px; } .marca svg { width: 30px; height: 30px; } .cabecera nav { gap: 2px; } .cabecera nav a, .cabecera nav .cuenta-nav { padding: 9px 8px; } }
 .cuenta { padding: 44px 0 80px; }
 .cuenta .ancho { max-width: 640px; }
 .cuenta h1 { font-size: clamp(34px, 6vw, 50px); line-height: 1; text-transform: uppercase; margin-bottom: 22px; }

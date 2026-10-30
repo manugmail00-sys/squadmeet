@@ -18,14 +18,14 @@
   const fechaLarga = (t) => new Date(t).toLocaleDateString(es ? 'es-ES' : 'en-GB', { day: 'numeric', month: 'long' });
   const T = es ? {
     entrar: 'Entrar', miCuenta: 'Mi cuenta',
-    siempre: 'Pro para siempre · 5 €', pase: 'Pro 31 días · 1,99 €',
-    correo: 'Tu correo', ayudaCorreo: 'Será tu cuenta de SquadMeet (sin contraseña). Usa el mismo al pagar.', pagar: 'Pagar con Payhip', mal: 'Escribe bien tu correo.',
-    seguro: 'Pago seguro con tarjeta o PayPal en Payhip. Pro se activa solo en cuanto termines.',
+    entraParaComprar: 'Entra para comprar Pro', entraParaComprarTxt: (p) => `${p}. Antes, entra en tu cuenta: Pro irá con ella a cualquier navegador. Sin contraseñas, te mandamos un código.`,
+    siempre: 'Pro para siempre · 5\u00a0€', mensual: 'Pro mensual · 1,99\u00a0€/mes',
+    correo: 'Tu correo', ayudaCorreo: 'Será tu cuenta de SquadMeet (sin contraseña). Usa el mismo al pagar.', pagar: 'Continuar al pago', mal: 'Escribe bien tu correo.',
+    seguro: 'Pago seguro en Whop, con tarjeta u otros métodos. Pro se activa solo en cuanto termines.',
     sinExt: 'Aún no tienes la extensión en este navegador: no pasa nada, al instalarla aquí ya serás Pro.',
-    esperando: 'Completa el pago en Payhip', esperandoTxt: (c) => `Paga con <strong>${c}</strong> en la pestaña de Payhip. Esto se actualiza solo.`,
-    reabrir: 'Volver a abrir Payhip', otro: 'Cambiar de correo',
-    lento: (u) => `¿Ya has pagado y no cambia? Si pagaste con otro correo, <a href="${u}">entra con ese correo</a>. Si no, escríbenos a contacto@squadmeet.app.`,
-    listo: '¡Ya eres Pro!', hasta: (f) => `Tienes Pro hasta el ${f}.`, siempreTxt: 'Para siempre, sin más pagos.',
+    esperando: 'Completa el pago en Whop', esperandoTxt: (c) => `Termina el pago en la ventana de Whop (cuenta <strong>${c}</strong>). Esto se actualiza solo.`,
+    reabrir: 'Abrir el pago', lento: () => 'Si ya has pagado y esto no cambia, espera un momento o escríbenos a contacto@squadmeet.app.',
+    listo: '¡Ya eres Pro!', mensualTxt: (f, renueva) => (renueva ? `Pro mensual: próximo cobro el ${f}. Cancelas cuando quieras desde Mi cuenta.` : `Tienes Pro hasta el ${f}.`), siempreTxt: 'Para siempre, sin más pagos.',
     tuCuenta: (c) => `Tu cuenta es <strong>${c}</strong>: entra con ella en cualquier navegador y tendrás Pro.`,
     conExt: 'Ya está activo en tu extensión SquadMeet: abre ome.tv y crea tu grupo, sin límite.',
     instala: 'Instala SquadMeet en este navegador y Pro estará ahí al momento. ¿En otro ordenador o en el móvil? En el panel de SquadMeet pulsa «Entrar» y escribe tu correo.',
@@ -39,30 +39,29 @@
     codigo: 'Código', entrarBoton: 'Entrar', comprobando: 'Comprobando…',
     noLlega: '¿No llega? Mira en spam o', reenviar: 'mándalo otra vez', reenviarEn: (s) => `mándalo otra vez (en ${s} s)`, otroCorreo: 'Usar otro correo',
     entrarComo: 'Entrar en tu cuenta', entrarAquiTexto: 'Pulsa el botón para entrar en este navegador.', entrarAqui: 'Entrar aquí',
-    gratis: 'Gratis', gratisTxt: '10 minutos al día con hasta 3 amigos. Con Pro, sin límite.',
-    proSiempreTxt: 'Pro para siempre', proPaseTxt: (f) => `Pro hasta el ${f}`, quedan: (d) => (d <= 1 ? 'se acaba hoy' : `quedan ${d} días`),
-    ventajas: ['Sin límite de tiempo', 'Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
-    comprarSiempre: '<b>5 €</b> para siempre', comprarPase: '<b>1,99 €</b> · 31 días', renovar: '<b>Renovar</b> 31 días · 1,99 €', pasarSiempre: '<b>Para siempre</b> · 5 €', sinSuscripcion: 'Sin suscripción: nada se renueva solo.',
+    gratis: 'Gratis', gratisTxt: 'Gratis y sin límite de tiempo, con hasta 3 amigos. Con Pro, más amigos, HD y chat.',
+    proSiempreTxt: 'Pro para siempre', proMensualTxt: (f, renueva) => (renueva ? `Pro mensual · próximo cobro el ${f}` : `Pro hasta el ${f} (no se renueva)`),
+    ventajas: ['Hasta 5 amigos', 'HD para tus amigos', 'Chat del grupo y votos'],
+    comprarSiempre: '<b>5 €</b> para siempre', comprarMensual: '<b>1,99 €</b> al mes', volverSuscribir: '<b>Volver a suscribirme</b> · 1,99 €/mes', pasarSiempre: '<b>Para siempre</b> · 5 €', gestionar: 'Gestionar o cancelar la suscripción', sinSuscripcion: 'La mensual se renueva cada mes; cancelas cuando quieras. Para siempre es un solo pago.',
     extension: 'Extensión', extSi: 'Instalada en este navegador: tu cuenta ya vale en el panel de ome.tv.', extNo: 'No está en este navegador. Instálala y tu cuenta pasará sola al panel de ome.tv. ¿En el móvil? En el panel pulsa «Entrar».',
     navegadores: 'Navegadores con tu cuenta', este: 'Este navegador', navegador: 'Navegador', visto: (r) => `Usado ${r}`, cerrarSesion: 'Cerrar sesión',
     maxNav: 'Tu cuenta vale en hasta 3 navegadores a la vez. Si entras en otro, se cierra la sesión del que lleve más tiempo sin usarse.',
     salir: 'Cerrar sesión en este navegador',
-    pagadoTitulo: '¡Pago completado!', pagadoPro: 'Ya eres Pro. Si estabas en ome.tv, vuelve a esa pestaña: el panel ya es Pro.', pagadoConfirmando: 'Estamos confirmando el pago con Payhip…',
+    pagadoTitulo: '¡Pago completado!', pagadoPro: 'Ya eres Pro. Si estabas en ome.tv, vuelve a esa pestaña: el panel ya es Pro.', pagadoConfirmando: 'Estamos confirmando el pago con Whop…',
     pagadoFuera: 'Si pagaste desde el panel de ome.tv, vuelve a esa pestaña: ya es Pro. Para usarlo también aquí, entra con el correo con el que has pagado.', bienvenida: (c) => `Has entrado como ${c}.`,
-    pagadoNoLlega: 'Aún no nos ha llegado el pago a esta cuenta', pagadoNoLlegaTxt: (c) => `Lo esperamos para <strong>${c}</strong>. Si en Payhip pusiste otro correo, el Pro está en ese: cierra sesión y entra con él. Si no, escríbenos a contacto@squadmeet.app y lo arreglamos.`,
-    comprobarOtraVez: 'Comprobar otra vez', entrarConOtro: 'Entrar con otro correo',
-    tengoClave: '¿Tienes una clave de licencia?', claveEtiqueta: 'Clave de licencia (viene en el correo de Payhip)', activar: 'Activar en mi cuenta',
-    errores: { usada: 'Esa clave ya está en otra cuenta. Escríbenos si es tuya.', invalida: 'Esa clave no existe. Cópiala tal cual del correo de Payhip.', caducada: 'Esa clave ya no está activa.', tienda: 'No hemos podido comprobarla ahora. Prueba en un rato.', correo: 'Escribe bien tu correo.', codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', despacio: 'Espera un poco antes de pedir otro código.', envio: 'No hemos podido mandar el correo. Prueba en un rato.', 'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', red: 'No hay conexión con SquadMeet. Prueba en un rato.', google: 'No se ha podido entrar con Google. Prueba con tu correo.', interno: 'Algo ha fallado. Prueba otra vez.' },
+    pagadoNoLlega: 'Aún no nos ha llegado el pago a esta cuenta', pagadoNoLlegaTxt: (c) => `Lo esperamos para <strong>${c}</strong>. Suele tardar unos segundos. Si ya has pagado, pulsa «Comprobar otra vez»; si sigue igual, escríbenos a contacto@squadmeet.app y lo arreglamos.`,
+    comprobarOtraVez: 'Comprobar otra vez',
+    errores: { cuenta: 'Entra primero en tu cuenta.', pago: 'No hemos podido abrir el pago. Prueba en un rato.', pronto: 'El pago estará disponible en unas horas. Vuelve a probar más tarde.', correo: 'Escribe bien tu correo.', codigo: 'Ese código no es. Revísalo en el correo.', caducado: 'Ese código ya no vale. Pide otro.', despacio: 'Espera un poco antes de pedir otro código.', envio: 'No hemos podido mandar el correo. Prueba en un rato.', 'sin-correo': 'Ahora no podemos mandar correos. Prueba en un rato.', red: 'No hay conexión con SquadMeet. Prueba en un rato.', google: 'No se ha podido entrar con Google. Prueba con tu correo.', interno: 'Algo ha fallado. Prueba otra vez.' },
   } : {
     entrar: 'Sign in', miCuenta: 'My account',
-    siempre: 'Pro forever · €5', pase: 'Pro 31 days · €1.99',
-    correo: 'Your email', ayudaCorreo: 'It becomes your SquadMeet account (no password). Use the same one when paying.', pagar: 'Pay with Payhip', mal: 'Check your email address.',
-    seguro: 'Secure payment by card or PayPal on Payhip. Pro turns on by itself as soon as you’re done.',
+    entraParaComprar: 'Sign in to buy Pro', entraParaComprarTxt: (p) => `${p}. First, sign in to your account: Pro goes with it to any browser. No passwords, we email you a code.`,
+    siempre: 'Pro forever · €5', mensual: 'Pro monthly · €1.99/mo',
+    correo: 'Your email', ayudaCorreo: 'It becomes your SquadMeet account (no password). Use the same one when paying.', pagar: 'Continue to payment', mal: 'Check your email address.',
+    seguro: 'Secure payment on Whop, by card or other methods. Pro turns on by itself as soon as you’re done.',
     sinExt: 'You don’t have the extension in this browser yet: no problem, you’ll be Pro as soon as you install it here.',
-    esperando: 'Finish paying on Payhip', esperandoTxt: (c) => `Pay with <strong>${c}</strong> in the Payhip tab. This updates by itself.`,
-    reabrir: 'Open Payhip again', otro: 'Use another email',
-    lento: (u) => `Paid and nothing changes? If you paid with another email, <a href="${u}">sign in with that one</a>. Otherwise, write to contacto@squadmeet.app.`,
-    listo: 'You’re Pro!', hasta: (f) => `You have Pro until ${f}.`, siempreTxt: 'Forever, no more payments.',
+    esperando: 'Finish paying on Whop', esperandoTxt: (c) => `Finish the payment in the Whop window (account <strong>${c}</strong>). This updates by itself.`,
+    reabrir: 'Open the payment', lento: () => 'If you’ve already paid and this doesn’t change, wait a moment or write to contacto@squadmeet.app.',
+    listo: 'You’re Pro!', mensualTxt: (f, renueva) => (renueva ? `Pro monthly: next charge on ${f}. Cancel whenever you like from My account.` : `You have Pro until ${f}.`), siempreTxt: 'Forever, no more payments.',
     tuCuenta: (c) => `Your account is <strong>${c}</strong>: sign in with it in any browser and you’ll have Pro.`,
     conExt: 'It’s already on in your SquadMeet extension: open ome.tv and create your group, no limits.',
     instala: 'Install SquadMeet in this browser and Pro will be there right away. On another computer or your phone? In the SquadMeet panel tap “Sign in” and type your email.',
@@ -75,20 +74,19 @@
     codigo: 'Code', entrarBoton: 'Sign in', comprobando: 'Checking…',
     noLlega: 'Not there? Check spam or', reenviar: 'send it again', reenviarEn: (s) => `send it again (in ${s}s)`, otroCorreo: 'Use another email',
     entrarComo: 'Sign in to your account', entrarAquiTexto: 'Tap the button to sign in on this browser.', entrarAqui: 'Sign in here',
-    gratis: 'Free', gratisTxt: '10 minutes a day with up to 3 friends. With Pro, no limits.',
-    proSiempreTxt: 'Pro forever', proPaseTxt: (f) => `Pro until ${f}`, quedan: (d) => (d <= 1 ? 'ends today' : `${d} days left`),
-    ventajas: ['No time limit', 'Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
-    comprarSiempre: '<b>€5</b> forever', comprarPase: '<b>€1.99</b> · 31 days', renovar: '<b>Renew</b> 31 days · €1.99', pasarSiempre: '<b>Forever</b> · €5', sinSuscripcion: 'No subscription: nothing renews by itself.',
+    gratis: 'Free', gratisTxt: 'Free, with no time limit, with up to 3 friends. With Pro, more friends, HD and chat.',
+    proSiempreTxt: 'Pro forever', proMensualTxt: (f, renueva) => (renueva ? `Pro monthly · next charge on ${f}` : `Pro until ${f} (doesn’t renew)`),
+    ventajas: ['Up to 5 friends', 'HD for your friends', 'Group chat and voting'],
+    comprarSiempre: '<b>€5</b> forever', comprarMensual: '<b>€1.99</b> a month', volverSuscribir: '<b>Subscribe again</b> · €1.99/mo', pasarSiempre: '<b>Forever</b> · €5', gestionar: 'Manage or cancel the subscription', sinSuscripcion: 'Monthly renews every month; cancel whenever you like. Forever is a single payment.',
     extension: 'Extension', extSi: 'Installed in this browser: your account already works in the ome.tv panel.', extNo: 'It’s not in this browser. Install it and your account moves to the ome.tv panel by itself. On your phone? In the panel tap “Sign in”.',
     navegadores: 'Browsers signed in', este: 'This browser', navegador: 'Browser', visto: (r) => `Used ${r}`, cerrarSesion: 'Sign out',
     maxNav: 'Your account works in up to 3 browsers at a time. If you sign in on another, the one unused for longest is signed out.',
     salir: 'Sign out of this browser',
-    pagadoTitulo: 'Payment complete!', pagadoPro: 'You’re Pro. If you were on ome.tv, go back to that tab: the panel is Pro already.', pagadoConfirmando: 'We’re confirming the payment with Payhip…',
+    pagadoTitulo: 'Payment complete!', pagadoPro: 'You’re Pro. If you were on ome.tv, go back to that tab: the panel is Pro already.', pagadoConfirmando: 'We’re confirming the payment with Whop…',
     pagadoFuera: 'If you paid from the ome.tv panel, go back to that tab: it’s Pro already. To use it here too, sign in with the email you paid with.', bienvenida: (c) => `You’re signed in as ${c}.`,
-    pagadoNoLlega: 'We haven’t received the payment for this account yet', pagadoNoLlegaTxt: (c) => `We’re waiting for it for <strong>${c}</strong>. If you typed another email on Payhip, Pro is on that one: sign out and sign in with it. Otherwise, write to contacto@squadmeet.app and we’ll sort it out.`,
-    comprobarOtraVez: 'Check again', entrarConOtro: 'Sign in with another email',
-    tengoClave: 'Have a license key?', claveEtiqueta: 'License key (it’s in the Payhip email)', activar: 'Activate on my account',
-    errores: { usada: 'That key is already on another account. Write to us if it’s yours.', invalida: 'That key doesn’t exist. Copy it exactly from the Payhip email.', caducada: 'That key is no longer active.', tienda: 'We couldn’t check it right now. Try again in a while.', correo: 'Check your email address.', codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', despacio: 'Wait a moment before asking for another code.', envio: 'We couldn’t send the email. Try again in a while.', 'sin-correo': 'We can’t send emails right now. Try again in a while.', red: 'Can’t reach SquadMeet. Try again in a while.', google: 'Signing in with Google didn’t work. Try with your email.', interno: 'Something went wrong. Try again.' },
+    pagadoNoLlega: 'We haven’t received the payment for this account yet', pagadoNoLlegaTxt: (c) => `We’re waiting for it for <strong>${c}</strong>. It usually takes a few seconds. If you’ve already paid, tap “Check again”; if nothing changes, write to contacto@squadmeet.app and we’ll sort it out.`,
+    comprobarOtraVez: 'Check again',
+    errores: { cuenta: 'Sign in to your account first.', pago: 'We couldn’t open the payment. Try again in a while.', pronto: 'Payments will be available in a few hours. Please try again later.', correo: 'Check your email address.', codigo: 'That code isn’t right. Check the email.', caducado: 'That code no longer works. Ask for another one.', despacio: 'Wait a moment before asking for another code.', envio: 'We couldn’t send the email. Try again in a while.', 'sin-correo': 'We can’t send emails right now. Try again in a while.', red: 'Can’t reach SquadMeet. Try again in a while.', google: 'Signing in with Google didn’t work. Try with your email.', interno: 'Something went wrong. Try again.' },
   };
   const VALIDO = /^[a-z0-9]{16,40}$/, ES_CORREO = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
   const leerL = (k) => { try { return localStorage.getItem(k) || ''; } catch { return ''; } };
@@ -146,11 +144,8 @@
     if (ruta !== 'acceder' && ruta !== 'salir' && (!extra.correo || extra.correo === correoActual())) guardarEstado(d);
     return d;
   }
-  // El enlace del producto de Payhip («payhip.com/b/XXXXX») va directo a su caja, sin pasar por la ficha.
-  const caja = (url) => { const m = /payhip\.com\/b\/(\w+)/.exec(url || ''); return m ? `https://payhip.com/buy?link=${m[1]}` : url; };
-
-  // ── Comprar Pro: con cuenta, directo a Payhip; sin ella, primero el correo (será su cuenta) ──────────
-  let dialogo = null, sondeo = 0, desde = 0, enlace = '', cual = 'siempre', alComprar = null;
+  // ── Comprar Pro: con cuenta, directo al pago de Whop; sin ella, primero entrar (correo y código) ──────
+  let dialogo = null, sondeo = 0, desde = 0, urlPago = '', cual = 'siempre', alComprar = null;
   function pintar(fase, datos = {}) {
     if (!dialogo) {
       dialogo = document.createElement('dialog');
@@ -162,63 +157,117 @@
       dialogo.showModal();
     }
     const correo = correoActual();
-    const fecha = datos.hasta ? fechaLarga(datos.hasta) : '';
-    if (fase === 'correo') {
-      dialogo.innerHTML = `<h2 id="dialogo-pro-t">${cual === 'pase' ? T.pase : T.siempre}</h2>
+    const fecha = datos.fin || datos.hasta ? fechaLarga(datos.fin || datos.hasta) : '';
+    // Sin cuenta: primero entrar (correo → código de 6 cifras) y luego pagar con esa cuenta.
+    if (fase === 'correo' || fase === 'codigo') {
+      const codigo = fase === 'codigo';
+      dialogo.innerHTML = `<h2 id="dialogo-pro-t">${codigo ? T.miraCorreo : T.entraParaComprar}</h2>
+        <p>${codigo ? T.codigoEnviado(escH(datos.correo)) : T.entraParaComprarTxt(cual === 'mensual' ? T.mensual : T.siempre)}</p>
         <form class="formulario-pro" novalidate>
-          <label for="pro-correo">${T.correo}</label>
-          <input id="pro-correo" type="email" inputmode="email" autocomplete="email" required value="${escH(correo)}" placeholder="tucorreo@ejemplo.com">
-          <p class="ayuda">${T.ayudaCorreo}</p>
-          ${datos.error ? `<p class="error" role="alert">${datos.error}</p>` : ''}
-          <button class="boton primario ancho-total" type="submit">${T.pagar}</button>
+          ${codigo ? `<label for="pro-codigo">${T.codigo}</label>
+          <input id="pro-codigo" class="campo-codigo" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="000000" spellcheck="false">`
+          : `<label for="pro-correo">${T.correo}</label>
+          <input id="pro-correo" type="email" inputmode="email" autocomplete="email" required value="${escH(datos.correo || correo)}" placeholder="tucorreo@ejemplo.com">`}
+          ${datos.error ? `<p class="error" role="alert">${escH(datos.error)}</p>` : ''}
+          <button class="boton primario ancho-total" type="submit">${codigo ? T.entrarBoton : T.mandarCodigo}</button>
         </form>
+        ${codigo ? `<p class="consejo">${T.noLlega} <button class="boton-enlace" type="button" data-otro>${T.otroCorreo}</button></p>` : `<p class="consejo">${T.sinCuenta}</p>`}
+        <button class="cerrar-dialogo" type="button" aria-label="${T.cerrar}" data-cerrar>×</button>`;
+      const f = dialogo.querySelector('form'), campo = f.querySelector('input');
+      const enviar = async () => {
+        const boton = f.querySelector('button');
+        if (boton.disabled) return;
+        if (!codigo) {
+          const c = campo.value.trim();
+          if (!ES_CORREO.test(c)) { pintar('correo', { correo: c, error: T.mal }); return; }
+          boton.disabled = true; boton.textContent = T.enviando;
+          const d = await api('acceder', { correo: c, idioma: es ? 'es' : 'en' });
+          if (d.enviado || d.espera) pintar('codigo', { correo: c });
+          else pintar('correo', { correo: c, error: T.errores[d.error] || T.errores.interno });
+        } else {
+          const n = campo.value.replace(/\D/g, '');
+          if (n.length !== 6) { pintar('codigo', { ...datos, error: T.errores.codigo }); return; }
+          boton.disabled = true; boton.textContent = T.comprobando;
+          const d = await api('verificar', { correo: datos.correo, codigo: n });
+          if (!d.cuenta) { pintar('codigo', { ...datos, error: T.errores[d.error] || T.errores.codigo }); return; }
+          ponerCorreo(datos.correo);
+          guardarEstado(d);
+          if (alComprar) alComprar();
+          pintar('dentro', d);
+        }
+      };
+      f.addEventListener('submit', (e) => { e.preventDefault(); enviar(); });
+      if (codigo) campo.addEventListener('input', () => { if (campo.value.replace(/\D/g, '').length === 6) enviar(); });
+      const otro = dialogo.querySelector('[data-otro]');
+      if (otro) otro.addEventListener('click', () => pintar('correo', { correo: datos.correo }));
+      campo.focus();
+    } else if (fase === 'dentro') {
+      // Ya ha entrado: el pago se abre con un clic suyo (si no, el navegador bloquearía la ventana).
+      if (datos.pro && datos.plan === 'siempre') { pintar('listo', datos); return; }
+      dialogo.innerHTML = `<h2 id="dialogo-pro-t">${cual === 'mensual' ? T.mensual : T.siempre}</h2>
+        <p>${T.bienvenida(escH(correo))}</p>
+        ${datos.error ? `<p class="error" role="alert">${escH(datos.error)}</p>` : ''}
+        <button class="boton primario ancho-total" type="button" data-pagar>${T.pagar}</button>
         <p class="consejo">${T.seguro}</p>
         ${conExtension ? '' : `<p class="consejo">${T.sinExt}</p>`}
         <button class="cerrar-dialogo" type="button" aria-label="${T.cerrar}" data-cerrar>×</button>`;
-      const f = dialogo.querySelector('form');
-      f.addEventListener('submit', (e) => { e.preventDefault(); pagar(f.querySelector('input').value.trim()); });
-      dialogo.querySelector('input').focus();
+      dialogo.querySelector('[data-pagar]').addEventListener('click', () => pagar());
     } else if (fase === 'esperando') {
       dialogo.innerHTML = `<h2 id="dialogo-pro-t">${T.esperando}</h2>
         <p>${T.esperandoTxt(escH(correo))}</p>
         <span class="girando" aria-hidden="true"></span>
         ${Date.now() - desde > 120000 ? `<p class="consejo">${T.lento(PAGINA_CUENTA)}</p>` : ''}
-        <div class="acciones"><a class="boton primario" href="${escH(enlace)}" target="_blank" rel="noopener">${T.reabrir}</a>${dentro() ? '' : `<button class="boton" type="button" data-otro>${T.otro}</button>`}</div>
+        ${urlPago ? `<div class="acciones"><a class="boton primario" href="${escH(urlPago)}" target="_blank" rel="noopener">${T.reabrir}</a></div>` : ''}
         <button class="cerrar-dialogo" type="button" aria-label="${T.cerrar}" data-cerrar>×</button>`;
-      const otro = dialogo.querySelector('[data-otro]');
-      if (otro) otro.addEventListener('click', () => { clearInterval(sondeo); pintar('correo'); });
     } else if (fase === 'instalada') {
-      dialogo.innerHTML = `<div class="listo-pro"><span class="sello-pro" aria-hidden="true">${CHECK}</span>
+      dialogo.innerHTML = `<div class="listo-pro" data-instalada><span class="sello-pro" aria-hidden="true">${CHECK}</span>
         <h2 id="dialogo-pro-t">${T.instalada}</h2>
         <p>${T.instaladaTxt}</p>
-        ${datos.pro ? `<p><strong>${T.yaPro} ${datos.plan === 'pase' ? T.hasta(fecha) : T.siempreTxt}</strong></p>` : ''}
+        ${datos.pro ? `<p><strong>${T.yaPro} ${datos.plan === 'mensual' ? T.mensualTxt(fecha, datos.renueva !== false) : T.siempreTxt}</strong></p>` : ''}
         <div class="acciones"><a class="boton primario" href="https://ome.tv/" target="_blank" rel="noopener">${T.abrir}</a><button class="boton" type="button" data-cerrar>${T.cerrar}</button></div></div>`;
     } else {
       dialogo.innerHTML = `<div class="listo-pro"><span class="sello-pro" aria-hidden="true">${CHECK}</span>
         <h2 id="dialogo-pro-t">${T.listo}</h2>
-        <p><strong>${datos.plan === 'pase' ? T.hasta(fecha) : T.siempreTxt}</strong></p>
+        <p><strong>${datos.plan === 'mensual' ? T.mensualTxt(fecha, datos.renueva !== false) : T.siempreTxt}</strong></p>
         <p>${T.tuCuenta(escH(correo))}</p>
         <p>${conExtension ? T.conExt : T.instala}</p>
         <div class="acciones">${conExtension ? `<a class="boton primario" href="https://ome.tv/" target="_blank" rel="noopener">${T.abrir}</a>` : `<a class="boton primario" href="/${es ? '#instalar' : 'en/#install'}" data-cerrar>${T.instalar}</a>`}${location.pathname === PAGINA_CUENTA ? `<button class="boton" type="button" data-cerrar>${T.cerrar}</button>` : `<a class="boton" href="${PAGINA_CUENTA}">${T.irCuenta}</a>`}</div></div>`;
     }
     for (const b of dialogo.querySelectorAll('[data-cerrar]')) b.addEventListener('click', () => dialogo && dialogo.close());
   }
-  function pagar(correo) {
-    if (!ES_CORREO.test(correo)) { pintar('correo', { error: T.mal }); return; }
-    // Se abre ya, dentro del clic, o el navegador bloquearía la ventana.
-    window.open(enlace, '_blank', 'noopener');
-    if (correo !== correoActual()) ponerCorreo(correo);
+  // Pagar: el servidor crea el pago en Whop con esta cuenta pegada y devuelve su dirección. Se abre ya una
+  // ventana (dentro del clic, o el navegador la bloquearía) y luego se lleva allí; en el móvil, en la misma
+  // pestaña (Whop vuelve a «Mi cuenta» al terminar).
+  async function pagar() {
+    const movil = !!(window.matchMedia && matchMedia('(pointer: coarse)').matches);
+    const ventana = movil ? null : window.open('', '_blank');
+    if (ventana) ventana.opener = null;
     desde = Date.now();
+    urlPago = '';
     pintar('esperando');
-    api('comprar', { correo, plan: cual }).catch(() => {});
+    const d = await api('comprar', { plan: cual, idioma: es ? 'es' : 'en' });
+    if (!d.url) {
+      if (ventana) ventana.close();
+      clearInterval(sondeo);
+      sondeo = 0;
+      pintar('dentro', { ...estadoGuardado(), error: T.errores[d.error] || T.errores.pago });
+      return;
+    }
+    urlPago = d.url;
     clearInterval(sondeo);
     sondeo = setInterval(comprobar, 4000);
+    if (movil) { location.href = d.url; return; }
+    if (ventana) ventana.location.href = d.url;
+    pintar('esperando');
   }
   async function comprobar() {
     if (!dialogo || !sondeo) return;
     if (Date.now() - desde > 30 * 60000) { clearInterval(sondeo); return; }
     const d = await api('estado');
-    if (d.pro && d.cuenta) {
+    // Pro y sin el pago de este plan por llegar: quien ya era Pro y compra otro plan (o se vuelve a suscribir)
+    // no ve «¡Ya eres Pro!» hasta que el servidor da por hecho el pago nuevo.
+    const sigue = (d.pendientes || []).some((x) => x === cual || x === 'todos');
+    if (d.pro && d.cuenta && !sigue) {
       clearInterval(sondeo);
       sondeo = 0;
       if (conExtension) window.postMessage({ tipo: 'squadmeet:pro' }, location.origin);
@@ -227,20 +276,27 @@
     } else if (Date.now() - desde > 120000 && !dialogo.querySelector('.consejo')) pintar('esperando');
   }
   window.addEventListener('focus', () => { if (dialogo && sondeo) comprobar(); });
-  // Los botones de comprar (en los precios y en «Mi cuenta»). Con cuenta se abre Payhip ya, en el mismo clic.
+  // Los botones de comprar (en los precios y en «Mi cuenta»). Con cuenta se abre el pago ya, en el mismo clic.
   document.addEventListener('click', (e) => {
     const a = e.target.closest && e.target.closest('a[data-plan]');
     if (!a) return;
     e.preventDefault();
-    enlace = caja(a.href);
-    cual = a.dataset.plan === 'pase' ? 'pase' : 'siempre';
-    if (dentro()) pagar(correoActual());
+    cual = a.dataset.plan === 'mensual' ? 'mensual' : 'siempre';
+    if (dentro()) pagar();
     else puente.then(() => pintar('correo'));
   });
   // Recién instalada la extensión (fondo.js abre la web con ?instalada=1): bienvenida y, si ya pagó, su Pro.
   if (/[?&]instalada=1/.test(location.search)) {
     history.replaceState(null, '', location.pathname + location.hash);
-    puente.then(async () => pintar('instalada', await api('estado')));
+    puente.then(async () => {
+      const antes = await api('estado');
+      pintar('instalada', antes);
+      // Si el puente de la extensión trae el correo de la cuenta un instante después, se pone al día el «y ya eres Pro».
+      if (!antes.pro) setTimeout(async () => {
+        const ahora = await api('estado');
+        if (ahora.pro && dialogo && dialogo.open && dialogo.querySelector('[data-instalada]')) pintar('instalada', ahora);
+      }, 1500);
+    });
   }
 
   // ── «Mi cuenta» (/cuenta/ y /en/account/) ──────────────────────────────────────────────────────
@@ -248,15 +304,14 @@
   if (app) iniciarCuenta(app);
   function iniciarCuenta(app) {
     const conGoogle = app.dataset.google === 'si';
-    const enlaces = { siempre: app.dataset.siempre, pase: app.dataset.pase };
+    // Los enlaces de Whop de cada plan (sin cuenta pegada): solo si no funciona el JavaScript.
+    const enlaces = { siempre: app.dataset.siempre, mensual: app.dataset.mensual };
     let fase = 'cargando', datos = {}, pedido = '', error = '', ocupado = false, enviadoEn = 0, pagado = false, recibido = '', ticket = '';
-    // Tras volver de Payhip: hasta cuándo se espera el aviso del pago antes de explicar qué puede pasar.
-    let esperaPago = 0, sondeoPago = 0, errorClave = '';
+    // Tras volver de Whop: hasta cuándo se espera el aviso del pago antes de explicar qué puede pasar.
+    let esperaPago = 0, sondeoPago = 0;
     const conError = (codigo) => T.errores[codigo] || T.errores.interno;
-    // Vuelta de Payhip (?pagado=1) y enlaces del correo (#entrar=…) o de Google (#google=…, #error=google).
+    // Vuelta de Whop (?pagado=1) y enlaces del correo (#entrar=…) o de Google (#google=…, #error=google).
     if (/[?&]pagado=1/.test(location.search)) {
-      // Payhip vuelve siempre a la página en español: quien tiene el navegador en otro idioma, a la inglesa.
-      if (es && !/^es\b/i.test(navigator.language || '')) { location.replace('/en/account/?pagado=1'); return; }
       pagado = true;
     }
     const h = /^#(entrar|google)=([\w-]+)\.([0-9a-f]{64})$/.exec(location.hash);
@@ -275,27 +330,22 @@
     };
     const boton = (plan, texto, clase) => (enlaces[plan] ? `<a class="boton ${clase} plan-cuenta" href="${escH(enlaces[plan])}" data-plan="${plan}">${texto}</a>` : '');
     const ventajas = `<ul class="ventajas-cuenta">${T.ventajas.map((v) => `<li>${CHECK}${v}</li>`).join('')}</ul>`;
-    const formClave = (abierto) => `<details class="clave-cuenta"${abierto ? ' open' : ''}><summary>${T.tengoClave}</summary>
-      <form class="formulario-pro" data-form="clave" novalidate><label for="cuenta-clave">${T.claveEtiqueta}</label>
-      <input id="cuenta-clave" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXX-XXXXX-XXXXX-XXXXX">
-      ${errorClave ? `<p class="error" role="alert">${escH(errorClave)}</p>` : ''}
-      <button class="boton primario" type="submit" ${ocupado ? 'disabled' : ''}>${ocupado ? T.comprobando : T.activar}</button></form></details>`;
     function aviso() {
       if (!pagado) return '';
       if (fase === 'dentro' && datos.pro) return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoPro}</p></div></div>`;
       if (fase === 'dentro' && Date.now() < esperaPago) return `<div class="aviso-cuenta"><span class="girando" aria-hidden="true"></span><p>${T.pagadoConfirmando}</p></div>`;
       if (fase === 'dentro') {
         return `<div class="aviso-cuenta duda"><div><h2>${T.pagadoNoLlega}</h2><p>${T.pagadoNoLlegaTxt(escH(correoActual()))}</p>
-          <div class="acciones"><button class="boton pequeno" type="button" data-comprobar>${T.comprobarOtraVez}</button><button class="boton pequeno" type="button" data-salir>${T.entrarConOtro}</button></div>${formClave(true)}</div></div>`;
+          <div class="acciones"><button class="boton pequeno" type="button" data-comprobar>${T.comprobarOtraVez}</button></div></div></div>`;
       }
       return `<div class="aviso-cuenta listo"><span class="sello-pro" aria-hidden="true">${CHECK}</span><div><h2>${T.pagadoTitulo}</h2><p>${T.pagadoFuera}</p></div></div>`;
     }
     function vistaDentro() {
       const correo = correoActual(), pro = !!datos.pro;
-      const dias = datos.plan === 'pase' ? Math.ceil((datos.hasta - Date.now()) / 86400000) : 0;
-      const plan = !pro ? `<p>${T.gratisTxt}</p>${ventajas}<div class="planes-cuenta">${boton('siempre', T.comprarSiempre, 'oscuro')}${boton('pase', T.comprarPase, 'primario')}</div><p class="consejo">${T.sinSuscripcion}</p>${pagado ? '' : formClave(!!errorClave)}`
-        : datos.plan === 'pase' ? `${ventajas}<div class="planes-cuenta">${boton('pase', T.renovar, dias <= 3 ? 'primario' : '')}${boton('siempre', T.pasarSiempre, 'oscuro')}</div><p class="consejo">${T.sinSuscripcion}</p>`
-          : ventajas;
+      const gestion = datos.gestion ? `<a class="boton" href="${escH(datos.gestion)}" target="_blank" rel="noopener">${T.gestionar}</a>` : '';
+      const plan = !pro ? `<p>${T.gratisTxt}</p>${ventajas}<div class="planes-cuenta">${boton('siempre', T.comprarSiempre, 'oscuro')}${boton('mensual', T.comprarMensual, 'primario')}</div><p class="consejo">${T.sinSuscripcion}</p>`
+        : datos.plan === 'mensual' ? `${ventajas}<div class="planes-cuenta">${gestion}${datos.renueva === false ? boton('mensual', T.volverSuscribir, 'primario') : ''}${boton('siempre', T.pasarSiempre, 'oscuro')}</div><p class="consejo">${T.sinSuscripcion}</p>`
+          : `${ventajas}${gestion ? `<div class="planes-cuenta">${gestion}</div>` : ''}`;
       const lista = (datos.dispositivos || []).map((n) => `<li><span class="nav-icono" aria-hidden="true">${/iPhone|Android|iPad/.test(n.nombre) ? '<svg viewBox="0 0 24 24"><rect x="6.5" y="2.5" width="11" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>' : '<svg viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="12.5" rx="2"/><path d="M8.5 20.5h7M12 17v3.5"/></svg>'}</span>
         <span class="nav-texto"><b>${escH(n.nombre || T.navegador)}</b><small>${n.este ? T.este : T.visto(relativo(n.visto))}</small></span>
         ${n.este ? '' : `<button class="boton pequeno" type="button" data-cerrar-otro="${escH(n.id)}">${T.cerrarSesion}</button>`}</li>`).join('');
@@ -303,7 +353,7 @@
         <section class="caja-cuenta">
           <div class="quien"><span class="avatar-cuenta" aria-hidden="true">${escH((correo[0] || '?').toUpperCase())}</span>
             <div><p class="correo-cuenta">${escH(correo)}</p>
-            <p class="plan-cuenta-linea"><span class="insignia-plan${pro ? ' pro' : ''}">${pro ? 'PRO' : T.gratis}</span>${pro ? (datos.plan === 'pase' ? `${T.proPaseTxt(fechaLarga(datos.hasta))} · ${T.quedan(dias)}` : T.proSiempreTxt) : ''}</p></div></div>
+            <p class="plan-cuenta-linea"><span class="insignia-plan${pro ? ' pro' : ''}">${pro ? 'PRO' : T.gratis}</span>${pro ? (datos.plan === 'mensual' ? T.proMensualTxt(fechaLarga(datos.fin || datos.hasta), datos.renueva !== false) : T.proSiempreTxt) : ''}</p></div></div>
           ${plan}
         </section>
         <section class="caja-cuenta">
@@ -373,7 +423,7 @@
       if (pagado && fase === 'dentro' && !d.pro) esperarPago();
       render();
     }
-    // Payhip avisa del pago en unos segundos: se pregunta cada 3 s durante 2 minutos (una sola vez a la vez).
+    // Whop avisa del pago en unos segundos: se pregunta cada 3 s durante 2 minutos (una sola vez a la vez).
     function esperarPago() {
       if (sondeoPago) return;
       if (!esperaPago || Date.now() > esperaPago) esperaPago = Date.now() + 2 * 60000;
@@ -410,16 +460,7 @@
       e.preventDefault();
       const f = e.target.dataset.form, campo = e.target.querySelector('input');
       if (f === 'correo') pedirCodigo(campo.value.trim());
-      else if (f === 'clave') {
-        const clave = campo.value.replace(/\s+/g, '');
-        if (!clave) return;
-        ocupado = true; errorClave = ''; render();
-        api('licencia', { clave }).then((d) => {
-          ocupado = false;
-          if (d.pro && d.cuenta) { datos = { ...datos, ...d }; pagado = true; esperaPago = 0; cargar(); }
-          else { errorClave = T.errores[d.error] || T.errores.invalida; render(); }
-        });
-      } else if (f === 'codigo') {
+      else if (f === 'codigo') {
         const c = campo.value.replace(/\D/g, '');
         if (c.length !== 6) { error = conError('codigo'); render(); return; }
         entrarCon(pedido, { codigo: c });
